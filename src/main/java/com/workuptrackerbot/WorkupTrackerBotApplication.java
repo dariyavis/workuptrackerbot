@@ -5,13 +5,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.telegram.telegrambots.ApiContextInitializer;
 
 @SpringBootApplication
 @RestController
-public class DemoApplication {
+public class WorkupTrackerBotApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        ApiContextInitializer.init();
+        SpringApplication.run(WorkupTrackerBotApplication.class, args);
     }
 
     @GetMapping("/hello")
