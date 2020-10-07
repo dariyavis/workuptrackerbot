@@ -7,6 +7,16 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
+<!--    <context:property-placeholder location="classpath*:bot.properties"/>-->
+
+    <bean id="properties"  class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:bot.properties</value>
+            </list>
+        </property>
+    </bean>
     <bean id="telegramBotsApi" class="org.telegram.telegrambots.TelegramBotsApi"/>
+    <bean id="log" class="org.apache.logging.log4j.Logger"/>
 
 </beans>
