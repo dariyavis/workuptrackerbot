@@ -1,24 +1,20 @@
 package com.workuptrackerbot.data.commands;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-
-import java.util.Properties;
-
 public enum Command {
-    START("start");
+    START("/start"),
+    SETTINGS("settings");
+//list projects
+    private  String command;
 
-    private  String name;
-
-    Command(String name) {
-        this.name = name;
+    Command(String command) {
+        this.command = command;
     }
 
-    public String getName() {
-        return name;
+    public String getCommand() {
+        return command;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCommand(String command) {
+        this.command = command;
     }
 }

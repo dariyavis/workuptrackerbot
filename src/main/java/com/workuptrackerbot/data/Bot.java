@@ -1,28 +1,27 @@
 package com.workuptrackerbot.data;
 
-import com.workuptrackerbot.data.commands.WorkupTrackerBotCommand;
+import com.workuptrackerbot.data.commands.BotCommand;
+import com.workuptrackerbot.data.commands.Command;
+import com.workuptrackerbot.data.commands.Keyboard;
 import com.workuptrackerbot.services.BotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Chat;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
-import org.telegram.telegrambots.bots.commandbot.commands.CommandRegistry;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static com.workuptrackerbot.data.commands.Command.START;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -33,7 +32,9 @@ public class Bot extends TelegramLongPollingBot {
     private BotService botService;
     @Autowired
     private Properties properties;
-//    private Map<> commands;
+
+    private Map<String, BiFunction<User, Chat, SendMessage>> commands;
+    private Map<String, Function<Update, SendMessage>> keybords;
 
 
     @PostConstruct
@@ -44,6 +45,13 @@ public class Bot extends TelegramLongPollingBot {
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
+
+        commands = new HashMap<>();
+        commands.put(Command.START.getCommand(), botService::commandStart);
+
+        keybords = new HashMap<>();
+        keybords.put(properties.getProperty(Keyboard.START.getCallbackdata()), botService::commandStartTracking);
+        keybords.put(properties.getProperty(Keyboard.STOP.getCallbackdata()), botService::commandStopTracking);
 
         SendMessage message = new SendMessage();
         message.setChatId("134789250");
@@ -63,14 +71,28 @@ public class Bot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
+
         try {
+            if (update.hasCallbackQuery()) {
+                this.execute(keybords.get(update.getCallbackQuery().getData()).apply(update));
+                return;
+            }
+
+            Message message = update.getMessage();
+            if (message != null && message.isCommand()) {
+                this.execute(commands.get(message.getText()).apply(message.getFrom(), message.getChat()));
+                return;
+            }
+
+
+
             this.execute(botService.onUpdateReceivedMsg(update));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
-//
+    //
 
     /**
      * Метод возвращает имя бота, указанное при регистрации.
@@ -100,56 +122,60 @@ public class Bot extends TelegramLongPollingBot {
      //     * @param s
      //     *         Строка, которую необходимот отправить в качестве сообщения.
      //     */
-/**  public synchronized void sendMsg(String chatId, String s) {
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.enableMarkdown(true);
-            sendMessage.setChatId(chatId);
-            sendMessage.setText(s);
-            try {
-                sendMessage(sendMessage);
-            } catch (TelegramApiException e) {
-                //            Log.log(Level.SEVERE, "Exception: ", e.toString());
-            }
-        }
- */
-    public void sendCustomKeyboard(String chatId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText("Custom message text");
+    /**
+     * public synchronized void sendMsg(String chatId, String s) {
+     * SendMessage sendMessage = new SendMessage();
+     * sendMessage.enableMarkdown(true);
+     * sendMessage.setChatId(chatId);
+     * sendMessage.setText(s);
+     * try {
+     * sendMessage(sendMessage);
+     * } catch (TelegramApiException e) {
+     * //            Log.log(Level.SEVERE, "Exception: ", e.toString());
+     * }
+     * }
+     */
 
-        // Create ReplyKeyboardMarkup object
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setResizeKeyboard(true);
-        // Create the keyboard (list of keyboard rows)
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        // Create a keyboard row
-        KeyboardRow row = new KeyboardRow();
-        // Set each button, you can also use KeyboardButton objects if you need something else than text
-        row.add("Button 1");
-        row.add("Button 2");
-        row.add("Button 3");
-        // Add the first row to the keyboard
-        keyboard.add(row);
-        // Create another keyboard row
-//        row = new KeyboardRow();
-//        // Set each button for the second line
-//        row.add("Row 2 Button 1");
-//        row.add("Row 2 Button 2");
-//        row.add("Row 2 Button 3");
-//        // Add the second row to the keyboard
+//    public void sendCustomKeyboard(String chatId) {
+//        SendMessage message = new SendMessage();
+//        message.setChatId(chatId);
+//        message.setText("Custom message text");
+//
+//        // Create ReplyKeyboardMarkup object
+//        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+//        keyboardMarkup.setResizeKeyboard(true);
+//        // Create the keyboard (list of keyboard rows)
+//        List<KeyboardRow> keyboard = new ArrayList<>();
+//        // Create a keyboard row
+//        KeyboardRow row = new KeyboardRow();
+//        // Set each button, you can also use KeyboardButton objects if you need something else than text
+//        row.add("Button 1");
+//        row.add("Button 2");
+//        row.add("Button 3");
+//        // Add the first row to the keyboard
 //        keyboard.add(row);
-        // Set the keyboard to the markup
-        keyboardMarkup.setKeyboard(keyboard);
-        keyboardMarkup.setOneTimeKeyboard(true);
-        // Add it to the message
-        message.setReplyMarkup(keyboardMarkup);
+//        // Create another keyboard row
+//        //        row = new KeyboardRow();
+//        //        // Set each button for the second line
+//        //        row.add("Row 2 Button 1");
+//        //        row.add("Row 2 Button 2");
+//        //        row.add("Row 2 Button 3");
+//        //        // Add the second row to the keyboard
+//        //        keyboard.add(row);
+//        // Set the keyboard to the markup
+//        keyboardMarkup.setKeyboard(keyboard);
+//        keyboardMarkup.setOneTimeKeyboard(true);
+//        // Add it to the message
+//        message.setReplyMarkup(keyboardMarkup);
+//
+//        try {
+//            // Send the message
+//            this.execute(message);
+//        } catch (TelegramApiException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        try {
-            // Send the message
-            this.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }

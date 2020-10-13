@@ -4,16 +4,16 @@ import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
 import java.util.function.BiConsumer;
 
-public class WorkupTrackerBotCommand extends BotCommand {
+@Deprecated
+public class BotCommand {
 
     private BiConsumer<User, Chat> callback;
 
-    public WorkupTrackerBotCommand(String commandIdentifier, String description, BiConsumer<User, Chat> callback) {
-        super(commandIdentifier, description);
+    public BotCommand(BiConsumer<User, Chat> callback) {
+        this.callback = callback;
     }
     /**
      * реализованный метод класса BotCommand, в котором обрабатывается команда, введенная пользователем
@@ -22,9 +22,9 @@ public class WorkupTrackerBotCommand extends BotCommand {
      * @param chat - чат бота и пользователя
      * @param strings - аргументы, переданные с командой
      */
-    @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        Logger logger = Logger.getLogger(WorkupTrackerBotCommand.class);
+
+    public void execute(User user, Chat chat) {
+        Logger logger = Logger.getLogger(BotCommand.class);
         logger.info("User " + user.getUserName() + " start work with bot");
         callback.accept(user,chat);
     }
