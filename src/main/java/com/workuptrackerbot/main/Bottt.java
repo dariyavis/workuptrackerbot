@@ -1,9 +1,10 @@
-package com.workuptrackerbot.data;
+package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.data.commands.BotCommand;
-import com.workuptrackerbot.data.commands.Command;
-import com.workuptrackerbot.data.commands.Keyboard;
-import com.workuptrackerbot.services.BotService;
+import com.workuptrackerbot.bottools.commands.BotCommandHandler;
+import com.workuptrackerbot.bottools.springbottools.Bot;
+import com.workuptrackerbot.bottools.commandsdepricated.Command;
+import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
+import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -12,8 +13,6 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
@@ -23,8 +22,9 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@Component
-public class Bot extends TelegramLongPollingBot {
+//@Bot(username="username", token="token")
+//@Component
+public class Bottt extends SpringBot {
 
     @Autowired
     private TelegramBotsApi telegramBotsApi;
@@ -113,6 +113,7 @@ public class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return "1379456077:AAE3ncbYpMKqogz1jqVz08enTS_5epkHJfs";
     }
+
 
     /**
      //     * Метод для настройки сообщения и его отправки.

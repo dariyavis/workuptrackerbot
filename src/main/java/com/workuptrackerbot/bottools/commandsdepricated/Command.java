@@ -1,8 +1,11 @@
-package com.workuptrackerbot.data.commands;
+package com.workuptrackerbot.bottools.commandsdepricated;
 
 public enum Command {
     START("/start"),
-    SETTINGS("settings");
+    NEW_PROJECT("/new_project"),
+    ADD_USER_TO_PROJECT("/add_user_to_project"),
+    LEAVE_PROJECT("/leave_project");
+//    SETTINGS("settings");
 //list projects
     private  String command;
 

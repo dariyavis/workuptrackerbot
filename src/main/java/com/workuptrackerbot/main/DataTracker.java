@@ -1,8 +1,7 @@
-package com.workuptrackerbot.data;
+package com.workuptrackerbot.main;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class DataTracker implements Serializable {
 

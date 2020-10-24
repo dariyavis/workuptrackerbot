@@ -1,6 +1,6 @@
-package com.workuptrackerbot.data.service;
+package com.workuptrackerbot.service;
 
-import com.workuptrackerbot.data.repository.UserRepository;
+import com.workuptrackerbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.objects.User;
@@ -22,13 +22,13 @@ public class UserService {
 //    }
 
     public void createUser(User user) {
-//        com.workuptrackerbot.data.entity.User userDB = new com.workuptrackerbot.data.entity.User();
+//        com.workuptrackerbot.entity.User userDB = new com.workuptrackerbot.entity.User();
 //        userDB.setId(user.getId());
 //        userDB.setUsername(user.getUserName());
 //        userDB.setFirstName(user.getFirstName());
 //        userDB.setLastName(user.getLastName());
 //        userDB.setFirstName(new Date());
         userRepository.save(
-                new com.workuptrackerbot.data.entity.User(user.getId(),user.getUserName(), new Date()));
+                new com.workuptrackerbot.entity.User(user.getId(),user.getUserName(), new Date()));
     }
 }

@@ -1,9 +1,8 @@
-package com.workuptrackerbot.data.service;
+package com.workuptrackerbot.service;
 
-import com.workuptrackerbot.data.entity.Interval;
-import com.workuptrackerbot.data.repository.IntervalRepository;
+import com.workuptrackerbot.entity.Interval;
+import com.workuptrackerbot.repository.IntervalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 //@Service
 public class IntevalService {

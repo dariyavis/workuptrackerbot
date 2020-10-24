@@ -1,26 +1,20 @@
-package com.workuptrackerbot.services;
+package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.data.commands.Command;
-import com.workuptrackerbot.data.commands.BotCommand;
-import com.workuptrackerbot.data.commands.Keyboard;
 
-import com.workuptrackerbot.data.service.UserService;
+import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
+import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.api.objects.replykeyboard.*;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

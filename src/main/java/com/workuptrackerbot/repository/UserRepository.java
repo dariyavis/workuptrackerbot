@@ -1,6 +1,6 @@
-package com.workuptrackerbot.data.repository;
+package com.workuptrackerbot.repository;
 
-import com.workuptrackerbot.data.entity.User;
+import com.workuptrackerbot.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

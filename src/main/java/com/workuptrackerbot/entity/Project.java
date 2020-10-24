@@ -1,4 +1,4 @@
-package com.workuptrackerbot.data.entity;
+package com.workuptrackerbot.entity;
 
 import javax.persistence.*;
 

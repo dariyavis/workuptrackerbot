@@ -1,9 +1,8 @@
-package com.workuptrackerbot.data.service;
+package com.workuptrackerbot.service;
 
-import com.workuptrackerbot.data.entity.Project;
-import com.workuptrackerbot.data.repository.ProjectRepository;
+import com.workuptrackerbot.entity.Project;
+import com.workuptrackerbot.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 //@Service
 public class ProjectService {
