@@ -23,9 +23,7 @@
             </list>
         </property>
     </bean>
-    <bean id="telegramBotsApi" class="org.telegram.telegrambots.TelegramBotsApi"/>
 
-<!--    <bean class="com.workuptrackerbot.bottools.springbottools.BotCommandBeanPostProcessor"/>-->
     <bean class="com.workuptrackerbot.bottools.springbottools.BotBeanPostProcessor"/>
 
 </beans>
