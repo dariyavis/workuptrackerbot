@@ -8,6 +8,7 @@ import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 import javax.annotation.PostConstruct;
@@ -42,10 +43,13 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
 //            this.execute(keybords.get(update.getCallbackQuery().getData()).apply(update));
 //            return;
 //        }
-
         Message message = update.getMessage();
         if (message != null && message.isCommand()) {
-            commands.get(message.getText()).handler(message.getFrom(), message.getChat());
+            try {
+                this.execute(commands.get(message.getText()).handler(message.getFrom(), message.getChat()));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
             return;
         }
     }

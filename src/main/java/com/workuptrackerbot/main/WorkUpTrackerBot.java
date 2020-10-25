@@ -17,8 +17,6 @@ import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
-@Component
-//@Bot(username="WorkUpTimeBot", token="1379456077:AAE3ncbYpMKqogz1jqVz08enTS_5epkHJfs")
 @Bot
 public class WorkUpTrackerBot extends SpringBot {
 
