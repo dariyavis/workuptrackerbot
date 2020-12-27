@@ -13,7 +13,7 @@ public class Interval {
 
         @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
         @JoinColumn(name = "project_id")
-        private User user;
+        private UserEntity userEntity;
 
         @Column(name = "startdate")
         private Date startDate;

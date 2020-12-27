@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -20,15 +20,15 @@ public class User {
     @Column(name = "registr_date")
     private Date registrDate;
 
-    @OneToMany
-    @JoinColumn(name="id")
-    private List<Project> projects;
+//    @OneToMany
+//    @JoinColumn(name="id")
+//    private List<Project> projects;
 
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(Integer id, String username, Date registrDate) {
+    public UserEntity(Integer id, String username, Date registrDate) {
         this.id = id;
         this.username = username;
         this.registrDate = registrDate;

@@ -1,15 +1,14 @@
-package com.workuptrackerbot.bottools.springbottools;
+package com.workuptrackerbot.bottools.springbottools.bpp;
 
-import com.workuptrackerbot.bottools.commands.BotCommandHandler;
+import com.workuptrackerbot.bottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.CommandInterceptorable;
+import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 
 public class BotBeanPostProcessor implements BeanPostProcessor {
@@ -29,13 +28,13 @@ public class BotBeanPostProcessor implements BeanPostProcessor {
         Class<?> beanClass = bean.getClass();
         if (beanClass.getAnnotation(Bot.class) == null || !(bean instanceof CommandInterceptorable)) return bean;
         CommandInterceptorable ci = (CommandInterceptorable) bean;
-        Map<String, Object> map = context.getBeansWithAnnotation(BotCommand.class);
+        Map<String, Object> map = context.getBeansWithAnnotation(com.workuptrackerbot.bottools.springbottools.annotations.BotCommand.class);
         //по хорошему нужно через reflections
         map.entrySet().forEach(item -> {
-            if (item.getValue() instanceof BotCommandHandler) {
-                BotCommandHandler itemValue = (BotCommandHandler) item.getValue();
+            if (item.getValue() instanceof Command) {
+                Command itemValue = (Command) item.getValue();
                 Class<?> commandClass = itemValue.getClass();
-                ci.addCommand(commandClass.getAnnotation(BotCommand.class).command(), itemValue);
+                ci.addCommand(commandClass.getAnnotation(com.workuptrackerbot.bottools.springbottools.annotations.BotCommand.class).command(), itemValue);
             }
         });
         return bean;

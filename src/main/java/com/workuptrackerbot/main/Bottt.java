@@ -1,19 +1,16 @@
 package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.bottools.commands.BotCommandHandler;
-import com.workuptrackerbot.bottools.springbottools.Bot;
+import com.workuptrackerbot.bottools.commands.CommandState;
 import com.workuptrackerbot.bottools.commandsdepricated.Command;
 import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
@@ -24,6 +21,7 @@ import java.util.function.Function;
 
 //@Bot(username="username", token="token")
 //@Component
+@Deprecated
 public class Bottt extends SpringBot {
 
     @Autowired
@@ -90,6 +88,16 @@ public class Bottt extends SpringBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void saveCommandState(CommandState commandState) {
+
+    }
+
+    @Override
+    public CommandState getCommandState(User user, Chat chat) {
+        return null;
     }
 
     //

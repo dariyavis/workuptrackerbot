@@ -13,9 +13,9 @@ public class Project {
     @Column
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name="user_id", nullable=false)
+//    private User user;
 
     public Long getId() {
         return id;
@@ -33,11 +33,11 @@ public class Project {
         this.name = name;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 }

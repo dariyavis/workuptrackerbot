@@ -24,6 +24,7 @@
         </property>
     </bean>
 
-    <bean class="com.workuptrackerbot.bottools.springbottools.BotBeanPostProcessor"/>
+    <bean class="com.workuptrackerbot.bottools.springbottools.bpp.BotBeanPostProcessor"/>
+    <bean class="com.workuptrackerbot.bottools.springbottools.bpp.BotCommandBeanPostProcessor"/>
 
 </beans>

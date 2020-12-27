@@ -1,4 +1,4 @@
-package com.workuptrackerbot.bottools.springbottools;
+package com.workuptrackerbot.bottools.springbottools.annotations;
 
 import org.springframework.stereotype.Component;
 
@@ -7,8 +7,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(value= ElementType.TYPE)
+@Target(value= ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface Bot {
+public @interface Answer {
+     int index() default -1;
+     String name() default "";
 }

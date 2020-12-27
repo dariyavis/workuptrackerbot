@@ -97,7 +97,7 @@ public class BotService {
 
         logger.info("User {} start work with bot", user.getUserName());
 
-        userService.createUser(user);
+//        userService.createUser(user);
 
         SendMessage message = new SendMessage();
         message.setChatId(chat.getId());
