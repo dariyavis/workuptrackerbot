@@ -6,8 +6,7 @@ import javax.persistence.*;
 @Table(name = "projects")
 public class Project {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "project_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
@@ -16,6 +15,15 @@ public class Project {
 //    @ManyToOne
 //    @JoinColumn(name="user_id", nullable=false)
 //    private User user;
+
+
+    public Project(String name) {
+        this.name = name;
+    }
+
+    public Project() {
+    }
+
 
     public Long getId() {
         return id;

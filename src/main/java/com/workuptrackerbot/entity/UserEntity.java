@@ -1,6 +1,7 @@
 package com.workuptrackerbot.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
 @Table(name = "users")
 public class UserEntity {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column
@@ -20,9 +21,19 @@ public class UserEntity {
     @Column(name = "registr_date")
     private Date registrDate;
 
-//    @OneToMany
-//    @JoinColumn(name="id")
-//    private List<Project> projects;
+//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "up",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "project_id")
+//    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "up",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    private List<Project> projects = new ArrayList<>();
 
 
     public UserEntity() {
@@ -56,5 +67,13 @@ public class UserEntity {
 
     public void setRegistrDate(Date registrDate) {
         this.registrDate = registrDate;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 }

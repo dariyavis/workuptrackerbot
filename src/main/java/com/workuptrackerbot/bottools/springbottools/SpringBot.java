@@ -56,6 +56,8 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
             //todo если состояние не пустое, выполнить из команды и передать еще сообщение
             if(commandState != null) {
                 executeCommandState(commandState, message);
+            } else {
+
             }
         }
     }

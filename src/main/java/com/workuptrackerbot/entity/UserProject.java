@@ -3,22 +3,32 @@ package com.workuptrackerbot.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "up")
+@Table(name = "up", uniqueConstraints = { @UniqueConstraint( columnNames = { "user_id", "project_id" } ) })
 public class UserProject {
 
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
-        @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JoinColumn(name = "user_id")
         private UserEntity userEntity;
 
-        @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JoinColumn(name = "project_id")
         private Project project;
 
+        @Column
         private boolean own;
+
+        public UserProject(UserEntity userEntity, Project project, boolean own) {
+                this.userEntity = userEntity;
+                this.project = project;
+                this.own = own;
+        }
+
+        public UserProject() {
+        }
 
         public Long getId() {
                 return id;
