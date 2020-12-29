@@ -1,4 +1,4 @@
-package com.workuptrackerbot.bottools.commandsdepricated;
+package com.workuptrackerbot.bottools.springbottools.commands.commandsdepricated;
 
 public enum Keyboard {
 

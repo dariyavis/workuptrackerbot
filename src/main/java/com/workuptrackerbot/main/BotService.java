@@ -1,7 +1,7 @@
 package com.workuptrackerbot.main;
 
 
-import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
+import com.workuptrackerbot.bottools.springbottools.commands.commandsdepricated.Keyboard;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

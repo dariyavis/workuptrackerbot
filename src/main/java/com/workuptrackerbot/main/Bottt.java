@@ -1,8 +1,8 @@
 package com.workuptrackerbot.main;
 
 import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
-import com.workuptrackerbot.bottools.commandsdepricated.Command;
-import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
+import com.workuptrackerbot.bottools.springbottools.commands.commandsdepricated.Command;
+import com.workuptrackerbot.bottools.springbottools.commands.commandsdepricated.Keyboard;
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.TelegramBotsApi;
