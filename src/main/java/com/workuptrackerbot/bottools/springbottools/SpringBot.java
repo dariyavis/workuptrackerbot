@@ -1,7 +1,7 @@
 package com.workuptrackerbot.bottools.springbottools;
 
-import com.workuptrackerbot.bottools.commands.Command;
-import com.workuptrackerbot.bottools.commands.CommandState;
+import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.TelegramBotsApi;

@@ -1,6 +1,6 @@
 package com.workuptrackerbot.bottools.springbottools.bpp;
 
-import com.workuptrackerbot.bottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.bottools.springbottools.CommandInterceptorable;
 import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
 import org.springframework.beans.BeansException;

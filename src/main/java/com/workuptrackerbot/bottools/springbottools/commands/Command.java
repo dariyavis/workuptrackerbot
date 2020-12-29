@@ -1,13 +1,10 @@
-package com.workuptrackerbot.bottools.commands;
+package com.workuptrackerbot.bottools.springbottools.commands;
 
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class Command {

@@ -1,14 +1,13 @@
 package com.workuptrackerbot.bottools.commands;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
-import com.workuptrackerbot.entity.UserEntity;
+import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
 

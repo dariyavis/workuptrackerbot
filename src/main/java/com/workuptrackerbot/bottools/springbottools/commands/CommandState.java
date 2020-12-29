@@ -1,4 +1,4 @@
-package com.workuptrackerbot.bottools.commands;
+package com.workuptrackerbot.bottools.springbottools.commands;
 
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.objects.Chat;

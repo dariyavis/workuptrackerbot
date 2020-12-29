@@ -1,6 +1,6 @@
 package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.bottools.commands.CommandState;
+import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import com.workuptrackerbot.bottools.commandsdepricated.Command;
 import com.workuptrackerbot.bottools.commandsdepricated.Keyboard;
 import com.workuptrackerbot.bottools.springbottools.SpringBot;

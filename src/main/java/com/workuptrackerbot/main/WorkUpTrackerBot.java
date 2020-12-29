@@ -1,6 +1,6 @@
 package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.bottools.commands.CommandState;
+import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import org.slf4j.Logger;
@@ -10,8 +10,6 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.lang.invoke.MethodHandles;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 @Bot
