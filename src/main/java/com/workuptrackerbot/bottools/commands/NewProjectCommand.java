@@ -1,24 +1,20 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.commandsservice.NewProjectCommandService;
+import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.entity.Interval;
 import com.workuptrackerbot.entity.Project;
-import com.workuptrackerbot.entity.UserProject;
 import com.workuptrackerbot.service.ProjectService;
-import com.workuptrackerbot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.function.Function;
 
 @com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/new_project")
 public class NewProjectCommand extends Command {
@@ -48,31 +44,18 @@ public class NewProjectCommand extends Command {
         try {
             projectService.addProject(user.getId(), message.getText());
             sendMessage.setText(properties.getProperty("command.createcommand.addedProject") + " " + message.getText());
-            sendMessage.setReplyMarkup(NewProjectCommandService.createInlineKeyboardProject(projectService.getProjects(user.getId())));
+            sendMessage.setReplyMarkup(
+                    ReplyKeyboardTools.createReplyKeyboardMarkup(
+                            Collections.singletonList(projectService.getProjects(user.getId())),
+                            o -> ((Project)o).getName()
+                    ));
         } catch (Exception e) {
             sendMessage.setText(properties.getProperty("command.createcommand.projectexist"));
         }
         return sendMessage;
     }
 
-//    private ReplyKeyboard createInlineKeyboardProject(List<UserProject> ups) {
-//
-//        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-//        List<InlineKeyboardButton> buttonsLine = new ArrayList<>();
-//        for (int i = 0; i < ups.size(); i++) {
-//            if(i%COUNT_BUTTONS_IN_LINE == 0){
-//                buttonsLine = new ArrayList<>();
-//                buttons.add(buttonsLine);
-//            }
-//            buttonsLine.add(new InlineKeyboardButton()
-//                    .setText(ups.get(i).getProject().getName())
-//                    .setCallbackData(ups.get(i).getId().toString()));
-//        }
-//
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        inlineKeyboardMarkup.setKeyboard(buttons);
-//        return inlineKeyboardMarkup;
-//    }
+
 
 
 

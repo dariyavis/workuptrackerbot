@@ -3,6 +3,7 @@ package com.workuptrackerbot.main;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Deprecated
 public class DataTracker implements Serializable {
 
     private String user;

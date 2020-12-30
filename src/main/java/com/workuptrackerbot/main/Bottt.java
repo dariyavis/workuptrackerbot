@@ -91,6 +91,16 @@ public class Bottt extends SpringBot {
     }
 
     @Override
+    protected void onUpdateReceivedCallbackQuery(Update update) {
+
+    }
+
+    @Override
+    protected void onUpdateReceivedMessage(Update update) {
+
+    }
+
+    @Override
     public void saveCommandState(CommandState commandState) {
 
     }

@@ -2,29 +2,63 @@ package com.workuptrackerbot.entity;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 
-//@Entity
-//@Table(name = "intervals")
+@Entity
+@Table(name = "intervals")
 public class Interval {
 
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
-        @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-        @JoinColumn(name = "project_id")
-        private UserEntity userEntity;
+        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+        @JoinColumn(name = "up_id")
+        private UserProject userProject;
 
         @Column(name = "startdate")
-        private Date startDate;
+        private Timestamp startDate;
 
         @Column(name = "stopdate")
-        private Date stopDate;
+        private Timestamp stopDate;
 
-        @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-        @JoinColumn(name = "project_id")
-        private Project project;
+        public Interval() {
+        }
 
+        public Interval(UserProject userProject, Timestamp startDate) {
+                this.userProject = userProject;
+                this.startDate = startDate;
+        }
 
+        public Long getId() {
+                return id;
+        }
 
+        public void setId(Long id) {
+                this.id = id;
+        }
+
+        public UserProject getUserProject() {
+                return userProject;
+        }
+
+        public void setUserProject(UserProject userProject) {
+                this.userProject = userProject;
+        }
+
+        public Timestamp getStartDate() {
+                return startDate;
+        }
+
+        public void setStartDate(Timestamp startDate) {
+                this.startDate = startDate;
+        }
+
+        public Timestamp getStopDate() {
+                return stopDate;
+        }
+
+        public void setStopDate(Timestamp stopDate) {
+                this.stopDate = stopDate;
+        }
 }

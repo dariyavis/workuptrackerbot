@@ -1,10 +1,10 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.commandsservice.NewProjectCommandService;
+import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.entity.UserEntity;
-import com.workuptrackerbot.entity.UserProject;
 import com.workuptrackerbot.service.ProjectService;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
+import java.util.Collections;
 import java.util.Properties;
 
 @com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/start")
@@ -50,7 +50,11 @@ public class StartCommand extends Command {
         {
             messageNew.setText(properties.getProperty("command.startcommand.reset"));
             UserEntity userEntity = userService.createOrUpdateUser(user);
-            messageNew.setReplyMarkup(NewProjectCommandService.createInlineKeyboardProject(userEntity.getProjects()));
+            messageNew.setReplyMarkup(
+                    ReplyKeyboardTools.createReplyKeyboardMarkup(
+                            Collections.singletonList(userEntity.getProjects()),
+                            o -> ((Project)o).getName()
+                    ));
         }
         return messageNew;
     }

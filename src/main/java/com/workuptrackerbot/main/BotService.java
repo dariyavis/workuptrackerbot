@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+@Deprecated
 @Service
 public class BotService {
 

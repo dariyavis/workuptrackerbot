@@ -40,10 +40,10 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
     @Override
     public void onUpdateReceived(Update update) {
 
-//        if (update.hasCallbackQuery()) {
-//            this.execute(keybords.get(update.getCallbackQuery().getData()).apply(update));
-//            return;
-//        }
+        if (update.hasCallbackQuery()) {
+            onUpdateReceivedCallbackQuery(update);
+            return;
+        }
         Message message = update.getMessage();
         User user = message.getFrom();
         Chat chat = message.getChat();
@@ -53,14 +53,20 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
             return;
         } else {
             CommandState commandState = getCommandState(user,chat);
-            //todo если состояние не пустое, выполнить из команды и передать еще сообщение
+            //если состояние не пустое, выполнить из команды и передать еще сообщение
             if(commandState != null) {
                 executeCommandState(commandState, message);
             } else {
+                //сообщение с названием проекта
+                onUpdateReceivedMessage(update);
 
             }
         }
     }
+
+    protected abstract void onUpdateReceivedCallbackQuery(Update update);
+
+    protected abstract void onUpdateReceivedMessage(Update update);
 
     private void executeCommandState(CommandState commandState, Message message){
         CommandState commandStateNew =  commands.get(commandState.getCommand()).handler(commandState, message);
