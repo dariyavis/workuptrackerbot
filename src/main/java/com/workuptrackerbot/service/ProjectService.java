@@ -15,7 +15,7 @@ import java.util.List;
 public class ProjectService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -23,14 +23,14 @@ public class ProjectService {
     @Autowired
     private UPRepository upRepository;
 
-    public List<UserProject> addProject(String username, String projectName) throws Exception {
+    public void addProject(Integer user_id, String projectName) throws Exception {
         /*todo
         Найти юзера
         Проверить нет ли такого проекта, если нет, создать
         Вернуть проект
          */
 
-        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userService.getUser(user_id);
         //если проект уже существует
         if(user.getProjects().stream().anyMatch(project -> projectName.equals(project.getName()))){
             throw new Exception("project is already exist");
@@ -41,7 +41,9 @@ public class ProjectService {
 
         UserProject userProject = new UserProject(user, project, true);
         upRepository.save(userProject);
+    }
 
-        return upRepository.findByUserEntity(user);
+    public List<Project> getProjects(Integer user_id){
+        return userService.getUser(user_id).getProjects();
     }
 }
