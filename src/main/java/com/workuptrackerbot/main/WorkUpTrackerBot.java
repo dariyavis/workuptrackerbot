@@ -13,7 +13,9 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -73,8 +75,13 @@ public class WorkUpTrackerBot extends SpringBot {
             return;
         }
 
+        deleteMessage(message.getChatId().toString(), message.getMessageId());
+
+        //todo сделать кнопку check времени, которая будет удалять сообщение через 30 секунд
         executeMessage(message.getChatId(),
+                MessageFormat.format(
                 properties.getProperty("keyboard.tracking.start.message"),
+                        interval.getUserProject().getProject().getName()),
                 ReplyKeyboardTools.createInlineKeyboard(interval,
                         o -> properties.getProperty("keyboard.tracking.stop.button"),
                         o -> ((Interval) o).getId().toString()));
@@ -92,7 +99,11 @@ public class WorkUpTrackerBot extends SpringBot {
                 callbackQuery.getData(),
                 new Timestamp(System.currentTimeMillis()));
 
-       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss  dd.MM.yy");
+        Message message = update.getCallbackQuery().getMessage();
+        deleteMessage(message.getChatId().toString(), message.getMessageId());
+
+
+       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
 //       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 
@@ -133,6 +144,18 @@ public class WorkUpTrackerBot extends SpringBot {
         message.enableMarkdown(true);
         try {
             this.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void deleteMessage(String chatId, Integer messageId) {
+        DeleteMessage deleteMessage = new DeleteMessage();
+        deleteMessage.setChatId(chatId);
+        deleteMessage.setMessageId(messageId);
+        try {
+            this.execute(deleteMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
