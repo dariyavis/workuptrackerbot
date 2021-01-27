@@ -6,7 +6,7 @@ import com.workuptrackerbot.repository.IntervalRepository;
 import com.workuptrackerbot.repository.UPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -35,7 +35,7 @@ public class IntervalService {
     }
 
     public Interval updateInterval(String id, Timestamp stopDate) {
-        Interval interval = intervalRepository.findById(Long.parseLong(id)).get();
+        Interval interval = intervalRepository.findById(Long.parseLong(id)).orElseThrow();
         interval.setStopDate(stopDate);
         intervalRepository.save(interval);
         return interval;

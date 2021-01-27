@@ -4,14 +4,14 @@ import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
@@ -26,17 +26,6 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @PostConstruct
-    public void postConstruct() {
-        telegramBotsApi = new TelegramBotsApi();
-        try {
-            telegramBotsApi.registerBot(this);
-        logger.info("Bot {} registered", getBotUsername());
-        } catch (TelegramApiRequestException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onUpdateReceived(Update update) {
 
@@ -47,10 +36,10 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
         Message message = update.getMessage();
         User user = message.getFrom();
         Chat chat = message.getChat();
-        if (message != null && message.isCommand()) {
+//        if (message != null && message.isCommand()) {
+        if (message.isCommand()) {
             String commandKey = message.getText();
                 executeCommandState(new CommandState(user, chat, commandKey), message);
-            return;
         } else {
             CommandState commandState = getCommandState(user,chat);
             //если состояние не пустое, выполнить из команды и передать еще сообщение

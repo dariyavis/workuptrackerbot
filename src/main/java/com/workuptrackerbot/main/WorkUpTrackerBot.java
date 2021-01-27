@@ -1,34 +1,29 @@
 package com.workuptrackerbot.main;
 
-import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
-import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
+import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
+import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Interval;
 import com.workuptrackerbot.service.IntervalService;
 import org.joda.time.Period;
-import org.joda.time.ReadablePeriod;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.api.objects.*;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.lang.invoke.MethodHandles;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Properties;
-import java.util.function.Function;
 
 @Bot
 public class WorkUpTrackerBot extends SpringBot {
@@ -83,8 +78,8 @@ public class WorkUpTrackerBot extends SpringBot {
                 properties.getProperty("keyboard.tracking.start.message"),
                         interval.getUserProject().getProject().getName()),
                 ReplyKeyboardTools.createInlineKeyboard(interval,
-                        o -> properties.getProperty("keyboard.tracking.stop.button"),
-                        o -> ((Interval) o).getId().toString()));
+                        i -> properties.getProperty("keyboard.tracking.stop.button"),
+                        i -> i.getId().toString()));
     }
 
     //from unix
@@ -103,8 +98,8 @@ public class WorkUpTrackerBot extends SpringBot {
         deleteMessage(message.getChatId().toString(), message.getMessageId());
 
 
-       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
-//       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
+       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 
         executeMessage(callbackQuery.getMessage().getChatId(),
@@ -138,7 +133,7 @@ public class WorkUpTrackerBot extends SpringBot {
 
     private void executeMessage(Long chatId, String text, ReplyKeyboard replyKeyboard){
         SendMessage message = new SendMessage();
-        message.setChatId(chatId);
+        message.setChatId(chatId.toString());
         message.setText(text);
         message.setReplyMarkup(replyKeyboard);
         message.enableMarkdown(true);

@@ -1,12 +1,11 @@
 package com.workuptrackerbot.bottools.tlgmtools;
 
-import com.workuptrackerbot.entity.Interval;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,11 +16,11 @@ public class ReplyKeyboardTools {
 
     private static int COUNT_BUTTONS_IN_LINE = 3;
 
-    public static ReplyKeyboard createReplyKeyboardMarkup(List<Object> objects, Function<Object, String> extractText) {
+    public static <T> ReplyKeyboard createReplyKeyboardMarkup(List<T> objects, Function<T, String> extractText) {
 
         if (objects.isEmpty()) {
 
-            ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove();
+            ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
             keyboardRemove.setSelective(false);
             return keyboardRemove;
         }
@@ -45,7 +44,7 @@ public class ReplyKeyboardTools {
         return keyboardMarkup;
     }
 
-    public static ReplyKeyboard createInlineKeyboard(List<Object> objects, Function<Object, String> extractText, Function<Object, String> extractId) {
+    public static <T> ReplyKeyboard createInlineKeyboard(List<T> objects, Function<T, String> extractText, Function<T, String> extractId) {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttonsLine = new ArrayList<>();
@@ -54,9 +53,10 @@ public class ReplyKeyboardTools {
                 buttonsLine = new ArrayList<>();
                 buttons.add(buttonsLine);
             }
-            buttonsLine.add(new InlineKeyboardButton()
-                    .setText(extractText.apply(objects.get(i)))
-                    .setCallbackData(extractId.apply(objects.get(i))));
+            InlineKeyboardButton ikbutton = new InlineKeyboardButton();
+            ikbutton.setText(extractText.apply(objects.get(i)));
+            ikbutton.setCallbackData(extractId.apply(objects.get(i)));
+            buttonsLine.add(ikbutton);
         }
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
@@ -64,9 +64,9 @@ public class ReplyKeyboardTools {
         return inlineKeyboardMarkup;
     }
 
-    public static ReplyKeyboard createInlineKeyboard(Object object, Function<Object, String> extractText, Function<Object, String> extractId) {
+    public static <T> ReplyKeyboard createInlineKeyboard(T object, Function<T, String> extractText, Function<T, String> extractId) {
 
-        List<Object> list = new LinkedList<>();
+        List<T> list = new LinkedList<>();
         list.add(object);
         return createInlineKeyboard(list, extractText, extractId);
     }

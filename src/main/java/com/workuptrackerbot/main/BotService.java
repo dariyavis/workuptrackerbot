@@ -7,12 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.api.objects.replykeyboard.*;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class BotService {
     public SendMessage onUpdateReceivedMsg(Update update) {
 
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
+        message.setChatId(update.getMessage().getChatId().toString());
         message.setText(properties.getProperty("message.text.welcome"));
         message.enableMarkdown(true);
         ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove();
@@ -101,7 +103,7 @@ public class BotService {
 //        userService.createUser(user);
 
         SendMessage message = new SendMessage();
-        message.setChatId(chat.getId());
+        message.setChatId(chat.getId().toString());
         message.setText(properties.getProperty("message.text.welcome"));
         message.enableMarkdown(true);
         message.setReplyMarkup(createInlineKeyboard(Keyboard.START));
@@ -111,10 +113,11 @@ public class BotService {
     private ReplyKeyboard createInlineKeyboard(Keyboard... keyboards) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttons1 = new ArrayList<>();
-        for (int i = 0; i < keyboards.length; i++) {
-            buttons1.add(new InlineKeyboardButton()
-                    .setText(properties.getProperty(keyboards[i].getButton()))
-                    .setCallbackData(properties.getProperty(keyboards[i].getCallbackdata())));
+        for (Keyboard keyboard : keyboards) {
+            InlineKeyboardButton ikButton = new InlineKeyboardButton();
+            ikButton.setText(properties.getProperty(keyboard.getButton()));
+            ikButton.setCallbackData(properties.getProperty(keyboard.getCallbackdata()));
+            buttons1.add(ikButton);
         }
         buttons.add(buttons1);
 
@@ -138,7 +141,7 @@ public class BotService {
 
         trackerService.startLog(user.getUserName(), date);
         SendMessage message = new SendMessage();
-        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
         message.setText(properties.getProperty(Keyboard.START.getMessage()));
         message.enableMarkdown(true);
         message.setReplyMarkup(createInlineKeyboard(Keyboard.STOP));
@@ -159,7 +162,7 @@ public class BotService {
 
         String result = trackerService.stopLog(user.getUserName(), date);
         SendMessage message = new SendMessage();
-        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
         message.setText(properties.getProperty(Keyboard.STOP.getMessage()) + result);
         message.enableMarkdown(true);
         message.setReplyMarkup(createInlineKeyboard(Keyboard.START));

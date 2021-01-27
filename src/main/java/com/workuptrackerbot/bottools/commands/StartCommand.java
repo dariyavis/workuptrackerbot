@@ -10,10 +10,10 @@ import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class StartCommand extends Command {
         User user = message.getFrom();
 
         SendMessage messageNew = new SendMessage();
-        messageNew.setChatId(message.getChatId());
+        messageNew.setChatId(message.getChatId().toString());
 
         if(!userService.isUserExist(user)) {
             userService.createOrUpdateUser(user);
@@ -51,10 +51,7 @@ public class StartCommand extends Command {
             messageNew.setText(properties.getProperty("command.startcommand.reset"));
             UserEntity userEntity = userService.createOrUpdateUser(user);
             messageNew.setReplyMarkup(
-                    ReplyKeyboardTools.createReplyKeyboardMarkup(
-                            Collections.singletonList(userEntity.getProjects()),
-                            o -> ((Project)o).getName()
-                    ));
+                    ReplyKeyboardTools.createReplyKeyboardMarkup(userEntity.getProjects(), Project::getName));
         }
         return messageNew;
     }

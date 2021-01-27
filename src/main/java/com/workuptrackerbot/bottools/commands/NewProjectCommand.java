@@ -7,10 +7,10 @@ import com.workuptrackerbot.entity.Interval;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.User;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -29,7 +29,7 @@ public class NewProjectCommand extends Command {
     @Answer(index = 0)
     public BotApiMethod nameQuestion(Message message) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChat().getId());
+        sendMessage.setChatId(message.getChat().getId().toString());
         sendMessage.setText(properties.getProperty("command.createcommand.enterNameProject"));
         return sendMessage;
     }
@@ -37,7 +37,7 @@ public class NewProjectCommand extends Command {
     @Answer(index = 1)
     public BotApiMethod addProject(Message message){
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChat().getId());
+        sendMessage.setChatId(message.getChat().getId().toString());
 
         User user = message.getFrom();
 
@@ -46,8 +46,8 @@ public class NewProjectCommand extends Command {
             sendMessage.setText(properties.getProperty("command.createcommand.addedProject") + " " + message.getText());
             sendMessage.setReplyMarkup(
                     ReplyKeyboardTools.createReplyKeyboardMarkup(
-                            Collections.singletonList(projectService.getProjects(user.getId())),
-                            o -> ((Project)o).getName()
+                            projectService.getProjects(user.getId()),
+                            Project::getName
                     ));
         } catch (Exception e) {
             sendMessage.setText(properties.getProperty("command.createcommand.projectexist"));
