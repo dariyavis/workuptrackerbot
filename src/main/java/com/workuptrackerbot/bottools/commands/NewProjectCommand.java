@@ -1,5 +1,6 @@
 package com.workuptrackerbot.bottools.commands;
 
+import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.function.Function;
 
-@com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/new_project")
+@BotCommand(command="/new_project")
 public class NewProjectCommand extends Command {
 
 

@@ -1,5 +1,6 @@
 package com.workuptrackerbot.bottools.springbottools.bpp;
 
+import com.workuptrackerbot.bottools.springbottools.annotations.MaxIndexCommand;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
@@ -13,6 +14,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +54,18 @@ public class BotCommandBeanPostProcessor implements BeanPostProcessor {
         }
         Command command = (Command) bean;
         command.setAnswers(steps);
+
+        Field[] fields = beanClass.getSuperclass().getDeclaredFields();
+        for (Field field : fields) {
+            if(field.getAnnotation(MaxIndexCommand.class) != null) {
+                field.setAccessible(true);
+                try {
+                    field.set(bean, steps.size());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return bean;
     }
 }
