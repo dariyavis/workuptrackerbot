@@ -131,21 +131,21 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.2</version>
-                <configuration>
-                    <tagNameFormat>v${project.version}</tagNameFormat>
-                    <preparationGoals>clean install</preparationGoals>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseProfiles>releases</releaseProfiles>
-                    <tagBase>scm:git:https://github.com/dariyavis/workuptrackerbot/tags</tagBase>
-                    <branchBase>scm:git:https://github.com/dariyavis/develop</branchBase>
-                    <branchName>master</branchName>
-                    <goals>package</goals>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-release-plugin</artifactId>-->
+<!--                <version>2.4.2</version>-->
+<!--                <configuration>-->
+<!--                    <tagNameFormat>v${project.version}</tagNameFormat>-->
+<!--                    <preparationGoals>clean install</preparationGoals>-->
+<!--                    <autoVersionSubmodules>true</autoVersionSubmodules>-->
+<!--                    <releaseProfiles>releases</releaseProfiles>-->
+<!--                    <tagBase>scm:git:https://github.com/dariyavis/workuptrackerbot/tags</tagBase>-->
+<!--                    <branchBase>scm:git:https://github.com/dariyavis/develop</branchBase>-->
+<!--                    <branchName>master</branchName>-->
+<!--                    <goals>package</goals>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
