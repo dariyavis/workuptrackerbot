@@ -148,7 +148,6 @@
 <!--            </plugin>-->
         </plugins>
     </build>
-
 <!--    <scm>-->
 <!--        <connection>scm:git:https://github.com/dariyavis/workuptrackerbot.git</connection>-->
 <!--        <developerConnection>scm:git:https://github.com/dariyavis/workuptrackerbot.git</developerConnection>-->
