@@ -19,4 +19,6 @@ public interface UPRepository extends JpaRepository<UserProject, Long>{
 //    UserProject findByIdFetchParent(@Param("id") Long id);
 
     UserProject findByUserEntityIdAndProjectName(Integer user_id, String project_name);
+
+    void deleteByUserEntityAndProject(UserEntity user, Project project);
 }

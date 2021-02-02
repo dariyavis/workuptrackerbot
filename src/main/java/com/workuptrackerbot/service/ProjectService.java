@@ -8,8 +8,10 @@ import com.workuptrackerbot.repository.UPRepository;
 import com.workuptrackerbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class ProjectService {
@@ -45,5 +47,14 @@ public class ProjectService {
 
     public List<Project> getProjects(Integer user_id){
         return userService.getUser(user_id).getProjects();
+    }
+
+    @Transactional
+    public void removeProject(Integer user_id, String projectName) throws Exception{
+        UserEntity user = userService.getUser(user_id);
+        Project project = user.getProjects().stream()
+                .filter(pro -> projectName.equals(pro.getName())).findFirst().orElseThrow();
+        upRepository.deleteByUserEntityAndProject(user, project);
+        projectRepository.delete(project);
     }
 }
