@@ -12,12 +12,14 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -27,6 +29,11 @@ import java.util.Properties;
 
 @Bot
 public class WorkUpTrackerBot extends SpringBot {
+
+    @Value("${bot.token}")
+    private String botToken;
+    @Value("${bot.username}")
+    private String botUsername;
 
     @Autowired
     private Properties properties;
@@ -38,15 +45,23 @@ public class WorkUpTrackerBot extends SpringBot {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @PostConstruct
+    public void postConstract(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("BOT: ");
+        builder.append("username = {} ");
+        builder.append("token = {}");
+        logger.info(builder.toString(), botUsername, botToken);
+    }
 
     @Override
     public String getBotUsername() {
-        return properties.getProperty("bot.username");
+        return botUsername;
     }
 
     @Override
     public String getBotToken() {
-        return properties.getProperty("bot.token");
+        return botToken;
     }
 
     @Override
