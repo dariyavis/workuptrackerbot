@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -21,7 +22,10 @@ public class WorkupTrackerBotApplication {
     private static final Logger log = LoggerFactory.getLogger(WorkupTrackerBotApplication.class.getName());
 
     public static void main(String[] args) {
-        SpringApplication.run(WorkupTrackerBotApplication.class, args);
+//        SpringApplication.run(WorkupTrackerBotApplication.class, args);
+        SpringApplication application = new SpringApplication(WorkupTrackerBotApplication.class);
+        application.addListeners(new ApplicationPidFileWriter("workuptrackerbot.pid"));
+        application.run();
     }
 
 }
