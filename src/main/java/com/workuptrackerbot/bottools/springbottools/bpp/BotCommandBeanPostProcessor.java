@@ -1,6 +1,6 @@
 package com.workuptrackerbot.bottools.springbottools.bpp;
 
-import com.workuptrackerbot.bottools.springbottools.annotations.MaxIndexCommand;
+import com.workuptrackerbot.bottools.springbottools.annotations.LastIndexCommand;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.NonNullApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -57,10 +56,10 @@ public class BotCommandBeanPostProcessor implements BeanPostProcessor {
 
         Field[] fields = beanClass.getSuperclass().getDeclaredFields();
         for (Field field : fields) {
-            if(field.getAnnotation(MaxIndexCommand.class) != null) {
+            if(field.getAnnotation(LastIndexCommand.class) != null) {
                 field.setAccessible(true);
                 try {
-                    field.set(bean, steps.size());
+                    field.set(bean, steps.size()-1);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
