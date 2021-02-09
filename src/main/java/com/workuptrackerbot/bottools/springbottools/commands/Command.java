@@ -2,7 +2,7 @@ package com.workuptrackerbot.bottools.springbottools.commands;
 
 
 
-import com.workuptrackerbot.bottools.springbottools.annotations.MaxIndexCommand;
+import com.workuptrackerbot.bottools.springbottools.annotations.LastIndexCommand;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -14,8 +14,8 @@ public abstract class Command {
 
     private Map<Integer, Function<Message, BotApiMethod>> answers = new HashMap<>();
 
-    @MaxIndexCommand
-    protected Integer max_index = 0;
+    @LastIndexCommand
+    protected Integer last_index = 0;
 
     public CommandState handler(CommandState commandState, Message message) {
 
@@ -24,7 +24,7 @@ public abstract class Command {
 //        CommandState commandState = new CommandState();
         commandState.setBotApiMethod(answers.get(index).apply(message));
         commandState.setIndex(index);
-        return  max_index.equals(index)?null:commandState;
+        return  last_index.equals(index)?null:commandState;
     }
 
     public Map<Integer, Function<Message, BotApiMethod>> getAnswers() {
