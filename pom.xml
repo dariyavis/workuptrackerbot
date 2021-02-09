@@ -10,20 +10,19 @@
     </parent>
     <groupId>com.workuptrackerbot</groupId>
     <artifactId>workuptrackerbot</artifactId>
-    <version>${project.version}-SNAPSHOT</version>
+    <version>0.1</version>
     <name>workuptrackerbot</name>
     <description>Demo project for Spring Boot</description>
-    <packaging>jar</packaging>
+    <!--    <packaging>jar</packaging>-->
 
     <properties>
         <telegrambots.version>5.0.1</telegrambots.version>
-        <project.version>0.0.1</project.version>
         <start-class>com.workuptrackerbot.main.WorkupTrackerBotApplication</start-class>
     </properties>
 
     <dependencies>
 
-<!--        Telegram      -->
+        <!--        Telegram      -->
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
@@ -45,7 +44,7 @@
             <version>${telegrambots.version}</version>
         </dependency>
 
-<!--        Spring boot     -->
+        <!--        Spring boot     -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -137,8 +136,58 @@
                 <version>3.2.0</version>
                 <configuration>
                     <outputDirectory>../../wutt</outputDirectory>
+                    <forceCreation>true</forceCreation>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                            <mainClass>com.workuptrackerbot.main.WorkupTrackerBotApplication</mainClass>
+                        </manifest>
+                    </archive>
+
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>com.workuptrackerbot.main.WorkupTrackerBotApplication</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>make-assembly</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
