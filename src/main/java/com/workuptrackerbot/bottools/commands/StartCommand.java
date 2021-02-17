@@ -50,5 +50,4 @@ public class StartCommand extends Command {
         }
         return messageNew;
     }
-
 }
