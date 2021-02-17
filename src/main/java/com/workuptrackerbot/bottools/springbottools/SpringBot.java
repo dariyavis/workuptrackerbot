@@ -20,8 +20,6 @@ import java.util.Map;
 
 public abstract class SpringBot extends TelegramLongPollingBot implements CommandInterceptorable {
 
-    private TelegramBotsApi telegramBotsApi;
-
     private Map<String, Command> commands = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -39,11 +37,11 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
 //        if (message != null && message.isCommand()) {
         if (message.isCommand()) {
             String commandKey = message.getText();
-                executeCommandState(new CommandState(user, chat, commandKey), message);
+                executeCommandState(new CommandState(user, commandKey), message);
         } else {
-            CommandState commandState = getCommandState(user,chat);
+            CommandState commandState = getCommandState(user);
             //если состояние не пустое, выполнить из команды и передать еще сообщение
-            if(commandState != null) {
+            if(commandState.getIndex() != null) {
                 executeCommandState(commandState, message);
             } else {
                 //сообщение с названием проекта
@@ -83,5 +81,5 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
 
     public abstract void saveCommandState(CommandState commandState);
 
-    public abstract CommandState getCommandState(User user, Chat chat);
+    public abstract CommandState getCommandState(User user);
 }

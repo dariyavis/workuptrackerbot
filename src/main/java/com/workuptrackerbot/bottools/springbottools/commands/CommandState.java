@@ -2,21 +2,24 @@ package com.workuptrackerbot.bottools.springbottools.commands;
 
 
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 public class CommandState {
 
     private BotApiMethod botApiMethod;
     private User user;
-    private Chat chat;
     private String command;
     private Integer index = -1;
 
-    public CommandState(User user, Chat chat, String command) {
+    public CommandState(User user, String command) {
         this.user = user;
-        this.chat = chat;
         this.command = command;
+    }
+
+    public CommandState(User user, String command, Integer index) {
+        this.user = user;
+        this.command = command;
+        this.index = index;
     }
 
     public BotApiMethod getBotApiMethod() {
@@ -33,14 +36,6 @@ public class CommandState {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
     }
 
     public void setCommand(String command) {

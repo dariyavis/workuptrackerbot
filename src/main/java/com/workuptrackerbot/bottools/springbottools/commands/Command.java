@@ -21,10 +21,9 @@ public abstract class Command {
 
         Integer index = commandState.getIndex() + 1;
 
-//        CommandState commandState = new CommandState();
         commandState.setBotApiMethod(answers.get(index).apply(message));
-        commandState.setIndex(index);
-        return  last_index.equals(index)?null:commandState;
+        commandState.setIndex(last_index.equals(index)?null:index);
+        return  commandState;
     }
 
     public Map<Integer, Function<Message, BotApiMethod>> getAnswers() {
