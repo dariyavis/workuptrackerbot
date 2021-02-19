@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IntervalRepository  extends JpaRepository<Interval, Long> {
 
+    Interval findByUserProjectAndStopDateIsNull(UserProject up);
+
     void deleteByUserProject(UserProject up);
 
 }

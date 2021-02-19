@@ -82,13 +82,13 @@ public class WorkUpTrackerBot extends SpringBot {
         Message message = update.getMessage();
         User user = message.getFrom();
         Interval interval = intervalService.createInterval(user, message.getText(), convertDate(message.getDate()));
+        deleteMessage(message.getChatId().toString(), message.getMessageId());
         if (interval == null) {
             return;
         }
 
-        deleteMessage(message.getChatId().toString(), message.getMessageId());
+//        deleteMessage(message.getChatId().toString(), message.getMessageId());
 
-        //todo сделать кнопку check времени, которая будет удалять сообщение через 30 секунд
         executeMessage(message.getChatId(),
                 MessageFormat.format(
                 properties.getProperty("keyboard.tracking.start.message"),
