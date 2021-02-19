@@ -3,6 +3,7 @@ package com.workuptrackerbot.service;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.entity.UserEntity;
 import com.workuptrackerbot.entity.UserProject;
+import com.workuptrackerbot.repository.IntervalRepository;
 import com.workuptrackerbot.repository.ProjectRepository;
 import com.workuptrackerbot.repository.UPRepository;
 import com.workuptrackerbot.repository.UserRepository;
@@ -24,6 +25,9 @@ public class ProjectService {
 
     @Autowired
     private UPRepository upRepository;
+
+    @Autowired
+    private IntervalService intervalService;
 
     public void addProject(Integer user_id, String projectName) throws Exception {
         /*todo
@@ -54,7 +58,9 @@ public class ProjectService {
         UserEntity user = userService.getUser(user_id);
         Project project = user.getProjects().stream()
                 .filter(pro -> projectName.equals(pro.getName())).findFirst().orElseThrow();
-        upRepository.deleteByUserEntityAndProject(user, project);
+        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, projectName);
+        intervalService.deleteIntervals(up);
+        upRepository.delete(up);
         projectRepository.delete(project);
     }
 }

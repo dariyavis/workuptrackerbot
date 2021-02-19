@@ -18,6 +18,9 @@ public class UserEntity {
 //    @Column(name = "firstname")
 //    private String firstName;
 
+    @Column
+    private Long chat_id;
+
     @Column(name = "registr_date")
     private Date registrDate;
 
@@ -39,9 +42,10 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(Integer id, String username, Date registrDate) {
+    public UserEntity(Integer id, String username, Long chat_id, Date registrDate) {
         this.id = id;
         this.username = username;
+        this.chat_id = chat_id;
         this.registrDate = registrDate;
     }
 
@@ -76,4 +80,26 @@ public class UserEntity {
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
+
+    public Long getChat_id() {
+        return chat_id;
+    }
+
+    public void setChat_id(Long chat_id) {
+        this.chat_id = chat_id;
+    }
 }
+
+/*
+*
+drop table command;
+drop table intervals;
+drop table up;
+drop table projects;
+drop table users;
+
+
+*
+*
+*
+* */

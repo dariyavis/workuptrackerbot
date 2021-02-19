@@ -5,6 +5,7 @@ import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
 import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Interval;
+import com.workuptrackerbot.service.CommandStateService;
 import com.workuptrackerbot.service.IntervalService;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -41,7 +42,8 @@ public class WorkUpTrackerBot extends SpringBot {
     @Autowired
     private IntervalService intervalService;
 
-    private CommandState commandStates = null;
+    @Autowired
+    private CommandStateService commandStateService;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -66,13 +68,12 @@ public class WorkUpTrackerBot extends SpringBot {
 
     @Override
     public void saveCommandState(CommandState commandState) {
-        this.commandStates = commandState;
+        commandStateService.saveCommandState(commandState);
     }
 
     @Override
-    public CommandState getCommandState(User user, Chat chat) {
-        //todo тянет из базы если есть
-        return commandStates;
+    public CommandState getCommandState(User user) {
+        return commandStateService.getCommandState(user);
     }
 
 
@@ -98,10 +99,6 @@ public class WorkUpTrackerBot extends SpringBot {
     }
 
     //from unix
-    public static Timestamp convertDate(Integer javaTimeStamp) {
-         return new Timestamp((long)javaTimeStamp * 1000);
-    }
-
     @Override
     public void onUpdateReceivedCallbackQuery(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
@@ -146,6 +143,10 @@ public class WorkUpTrackerBot extends SpringBot {
         return formatter.print(period);
     }
 
+    public static Timestamp convertDate(Integer javaTimeStamp) {
+        return new Timestamp((long)javaTimeStamp * 1000);
+    }
+
     private void executeMessage(Long chatId, String text, ReplyKeyboard replyKeyboard){
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
@@ -158,7 +159,6 @@ public class WorkUpTrackerBot extends SpringBot {
             e.printStackTrace();
         }
     }
-
 
     private void deleteMessage(String chatId, Integer messageId) {
         DeleteMessage deleteMessage = new DeleteMessage();

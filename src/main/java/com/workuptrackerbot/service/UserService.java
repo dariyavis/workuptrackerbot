@@ -19,7 +19,7 @@ public class UserService {
         return userRepository.existsById(user.getId());
     }
 
-    public UserEntity createOrUpdateUser(User user) {
+    public UserEntity createOrUpdateUser(User user, Long chat_id) {
         Optional<UserEntity> opt = userRepository.findById(user.getId());
         UserEntity newUserEntity;
 
@@ -31,6 +31,8 @@ public class UserService {
             newUserEntity = opt.orElseThrow();
         }
         newUserEntity.setUsername(user.getUserName());
+        newUserEntity.setChat_id(chat_id);
+
         return userRepository.save(newUserEntity);
     }
 
