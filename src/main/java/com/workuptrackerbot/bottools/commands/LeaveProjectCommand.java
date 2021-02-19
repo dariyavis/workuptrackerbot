@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.text.MessageFormat;
 import java.util.Properties;
 
 @BotCommand(command="/leave_project")
@@ -41,7 +42,10 @@ public class LeaveProjectCommand extends Command {
 
         try {
             projectService.removeProject(user.getId(), message.getText());
-            sendMessage.setText(properties.getProperty("command.leavecommand.leavedProject") + " " + message.getText());
+            sendMessage.setText(
+                    MessageFormat.format(
+                            properties.getProperty("command.leavecommand.leavedProject"),
+                            message.getText()));
             sendMessage.setReplyMarkup(
                     ReplyKeyboardTools.createReplyKeyboardMarkup(
                             projectService.getProjects(user.getId()),
