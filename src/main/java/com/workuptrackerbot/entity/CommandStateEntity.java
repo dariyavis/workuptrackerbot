@@ -1,5 +1,8 @@
 package com.workuptrackerbot.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,7 +13,8 @@ public class CommandStateEntity {
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
-        @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
         @JoinColumn(name = "user_id")
         private UserEntity userEntity;
 

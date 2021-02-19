@@ -40,4 +40,8 @@ public class IntervalService {
         intervalRepository.save(interval);
         return interval;
     }
+
+    public void deleteIntervals(UserProject up) {
+        intervalRepository.deleteByUserProject(up);
+    }
 }

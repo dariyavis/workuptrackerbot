@@ -1,5 +1,8 @@
 package com.workuptrackerbot.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -12,7 +15,8 @@ public class Interval {
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
-        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
         @JoinColumn(name = "up_id")
         private UserProject userProject;
 

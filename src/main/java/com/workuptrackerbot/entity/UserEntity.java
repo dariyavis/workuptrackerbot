@@ -89,3 +89,17 @@ public class UserEntity {
         this.chat_id = chat_id;
     }
 }
+
+/*
+*
+drop table command;
+drop table intervals;
+drop table up;
+drop table projects;
+drop table users;
+
+
+*
+*
+*
+* */
