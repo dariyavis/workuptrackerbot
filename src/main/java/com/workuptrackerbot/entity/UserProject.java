@@ -19,7 +19,10 @@ public class UserProject {
         private Project project;
 
         @Column
-        private boolean own;
+        private boolean own = true;
+
+        @Column
+        private boolean isActive = true;
 
 //        @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //        @JoinTable(
@@ -29,10 +32,9 @@ public class UserProject {
 //        )
 //        private List<Interval> intervals = new ArrayList<>();
 
-        public UserProject(UserEntity userEntity, Project project, boolean own) {
+        public UserProject(UserEntity userEntity, Project project) {
                 this.userEntity = userEntity;
                 this.project = project;
-                this.own = own;
         }
 
         public UserProject() {
@@ -70,7 +72,15 @@ public class UserProject {
                 this.own = own;
         }
 
-//        public List<Interval> getIntervals() {
+        public boolean isActive() {
+                return isActive;
+        }
+
+        public void setActive(boolean active) {
+                isActive = active;
+        }
+
+        //        public List<Interval> getIntervals() {
 //                return intervals;
 //        }
 //

@@ -30,11 +30,6 @@ public class ProjectService {
     private IntervalService intervalService;
 
     public void addProject(Integer user_id, String projectName) throws Exception {
-        /*todo
-        Найти юзера
-        Проверить нет ли такого проекта, если нет, создать
-        Вернуть проект
-         */
 
         UserEntity user = userService.getUser(user_id);
         //если проект уже существует
@@ -45,7 +40,7 @@ public class ProjectService {
         Project project = new Project(projectName);
         projectRepository.save(project);
 
-        UserProject userProject = new UserProject(user, project, true);
+        UserProject userProject = new UserProject(user, project);
         upRepository.save(userProject);
     }
 
