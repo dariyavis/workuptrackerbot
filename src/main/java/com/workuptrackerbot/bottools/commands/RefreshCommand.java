@@ -1,8 +1,8 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.entity.UserEntity;
 import com.workuptrackerbot.service.UserService;
@@ -18,7 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
 @com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/start")
-public class StartCommand extends Command {
+public class RefreshCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -31,22 +31,22 @@ public class StartCommand extends Command {
 
     @Answer(index = 0)
     public BotApiMethod handler(Message message) {
-        logger.info("User {} start work with bot", message.getFrom().getUserName());
+        logger.info("User {} refreshed", message.getFrom().getUserName());
         User user = message.getFrom();
 
         SendMessage messageNew = new SendMessage();
         messageNew.setChatId(message.getChatId().toString());
 
-        if(!userService.isUserExist(user)) {
-            userService.createOrUpdateUser(user, message.getChatId());
-            messageNew.setText(properties.getProperty("command.startcommand.welcome"));
-        }
+//        if(!userService.isUserExist(user)) {
+//            userService.createOrUpdateUser(user, message.getChatId());
+//            messageNew.setText(properties.getProperty("command.startcommand.welcome"));
+//        }
 //        else
 //        {
-//            messageNew.setText(properties.getProperty("command.startcommand.reset"));
-//            UserEntity userEntity = userService.createOrUpdateUser(user, message.getChatId());
-//            messageNew.setReplyMarkup(
-//                    ReplyKeyboardTools.createReplyKeyboardMarkup(userEntity.getProjects(), Project::getName));
+            messageNew.setText(properties.getProperty("command.startcommand.refresh"));
+            UserEntity userEntity = userService.createOrUpdateUser(user, message.getChatId());
+            messageNew.setReplyMarkup(
+                    ReplyKeyboardTools.createReplyKeyboardMarkup(userEntity.getProjects(), Project::getName));
 //        }
         return messageNew;
     }
