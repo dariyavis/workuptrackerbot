@@ -22,7 +22,7 @@ public class UserProject {
         private boolean own = true;
 
         @Column
-        private boolean isActive = true;
+        private boolean active = true;
 
 //        @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //        @JoinTable(
@@ -73,11 +73,11 @@ public class UserProject {
         }
 
         public boolean isActive() {
-                return isActive;
+                return active;
         }
 
         public void setActive(boolean active) {
-                isActive = active;
+                this.active = active;
         }
 
         //        public List<Interval> getIntervals() {

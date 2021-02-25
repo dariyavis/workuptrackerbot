@@ -47,7 +47,7 @@ public class NewProjectCommand extends Command {
             sendMessage.setText(properties.getProperty("command.createcommand.addedProject") + " " + message.getText());
             sendMessage.setReplyMarkup(
                     ReplyKeyboardTools.createReplyKeyboardMarkup(
-                            projectService.getProjects(user.getId()),
+                            projectService.getActiveProjects(user.getId()),
                             Project::getName
                     ));
         } catch (Exception e) {

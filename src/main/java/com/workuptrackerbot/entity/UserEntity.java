@@ -24,19 +24,13 @@ public class UserEntity {
     @Column(name = "registr_date")
     private Date registrDate;
 
-//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    @JoinTable(
 //            name = "up",
 //            joinColumns = @JoinColumn(name = "user_id"),
 //            inverseJoinColumns = @JoinColumn(name = "project_id")
 //    )
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "up",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    private List<Project> projects = new ArrayList<>();
+//    private List<Project> projects = new ArrayList<>();
 
 
     public UserEntity() {
@@ -71,14 +65,6 @@ public class UserEntity {
 
     public void setRegistrDate(Date registrDate) {
         this.registrDate = registrDate;
-    }
-
-    public List<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
     }
 
     public Long getChat_id() {

@@ -5,6 +5,7 @@ import com.workuptrackerbot.bottools.springbottools.commands.Command;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.entity.UserEntity;
+import com.workuptrackerbot.service.ProjectService;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
-@com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/start")
+@com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/refresh")
 public class RefreshCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -27,6 +28,9 @@ public class RefreshCommand extends Command {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProjectService projectService;
 
 
     @Answer(index = 0)
@@ -44,9 +48,12 @@ public class RefreshCommand extends Command {
 //        else
 //        {
             messageNew.setText(properties.getProperty("command.startcommand.refresh"));
-            UserEntity userEntity = userService.createOrUpdateUser(user, message.getChatId());
+            userService.createOrUpdateUser(user, message.getChatId());
+
             messageNew.setReplyMarkup(
-                    ReplyKeyboardTools.createReplyKeyboardMarkup(userEntity.getProjects(), Project::getName));
+                    ReplyKeyboardTools.createReplyKeyboardMarkup(
+                            projectService.getActiveProjects(user.getId()),
+                            Project::getName));
 //        }
         return messageNew;
     }

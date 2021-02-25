@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface UPRepository extends JpaRepository<UserProject, Long>{
 
-    List<UserProject> findByUserEntity(UserEntity user);
+    List<UserProject> findByUserEntityId(Integer user_id);
 
 
 //    @Query("select c from Child c join fetch c.parent where c.id = :id")
@@ -21,4 +21,6 @@ public interface UPRepository extends JpaRepository<UserProject, Long>{
     UserProject findByUserEntityIdAndProjectName(Integer user_id, String project_name);
 
     void deleteByUserEntityAndProject(UserEntity user, Project project);
+
+    List<UserProject> findByUserEntityIdAndActiveIsTrue(Integer user_id);
 }

@@ -30,6 +30,11 @@ public class LeaveProjectCommand extends Command {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());
         sendMessage.setText(properties.getProperty("command.leavecommand.enterNameProject"));
+        sendMessage.setReplyMarkup(
+                ReplyKeyboardTools.createReplyKeyboardMarkup(
+                        projectService.getProjects(message.getFrom().getId()),
+                        Project::getName
+                ));
         return sendMessage;
     }
 
@@ -48,7 +53,7 @@ public class LeaveProjectCommand extends Command {
                             message.getText()));
             sendMessage.setReplyMarkup(
                     ReplyKeyboardTools.createReplyKeyboardMarkup(
-                            projectService.getProjects(user.getId()),
+                            projectService.getActiveProjects(user.getId()),
                             Project::getName
                     ));
         } catch (Exception e) {

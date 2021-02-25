@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -33,7 +34,7 @@ public class ProjectService {
 
         UserEntity user = userService.getUser(user_id);
         //если проект уже существует
-        if(user.getProjects().stream().anyMatch(project -> projectName.equals(project.getName()))){
+        if(upRepository.findByUserEntityIdAndProjectName(user_id, projectName) != null){
             throw new Exception("project is already exist");
         }
 
@@ -44,18 +45,29 @@ public class ProjectService {
         upRepository.save(userProject);
     }
 
+//    public List<Project> getProjects(Integer user_id){
+//        return userService.getUser(user_id).getProjects();
+//    }
+
+    public List<Project> getActiveProjects(Integer user_id){
+        List<UserProject> ups = upRepository.findByUserEntityIdAndActiveIsTrue(user_id);
+        return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
+    }
+
     public List<Project> getProjects(Integer user_id){
-        return userService.getUser(user_id).getProjects();
+        List<UserProject> ups = upRepository.findByUserEntityId(user_id);
+        return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
     }
 
     @Transactional
     public void removeProject(Integer user_id, String projectName) throws Exception{
         UserEntity user = userService.getUser(user_id);
-        Project project = user.getProjects().stream()
-                .filter(pro -> projectName.equals(pro.getName())).findFirst().orElseThrow();
         UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, projectName);
+        if(up == null) {
+            return;
+        }
         intervalService.deleteIntervals(up);
         upRepository.delete(up);
-        projectRepository.delete(project);
+        projectRepository.delete(up.getProject());
     }
 }
