@@ -17,7 +17,14 @@ public abstract class Command {
     @LastIndexCommand
     protected Integer last_index = 0;
 
+    protected boolean active = true;
+
     public CommandState handler(CommandState commandState, Message message) {
+
+        if(!active) {
+            commandState.setIndex(last_index);
+            active = true;
+        }
 
         Integer index = commandState.getIndex() + 1;
 
@@ -32,5 +39,9 @@ public abstract class Command {
 
     public void setAnswers(Map<Integer, Function<Message, BotApiMethod>> answers) {
         this.answers = answers;
+    }
+
+    public void stop(){
+
     }
 }

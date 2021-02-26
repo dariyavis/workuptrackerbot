@@ -50,9 +50,15 @@ public class ProjectService {
 //    }
 
     public List<Project> getActiveProjects(Integer user_id){
-        List<UserProject> ups = upRepository.findByUserEntityIdAndActiveIsTrue(user_id);
+        List<UserProject> ups = upRepository.findByUserEntityIdAndActive(user_id, true);
         return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
     }
+
+    public List<Project> getArchiveProjects(Integer user_id){
+        List<UserProject> ups = upRepository.findByUserEntityIdAndActive(user_id, false);
+        return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
+    }
+
 
     public List<Project> getProjects(Integer user_id){
         List<UserProject> ups = upRepository.findByUserEntityId(user_id);
@@ -69,5 +75,12 @@ public class ProjectService {
         intervalService.deleteIntervals(up);
         upRepository.delete(up);
         projectRepository.delete(up.getProject());
+    }
+
+
+    public void zipProjectByName(Integer user_id, String project_name) {
+        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
+        up.setActive(true);
+        upRepository.save(up);
     }
 }

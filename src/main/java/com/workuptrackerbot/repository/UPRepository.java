@@ -22,5 +22,5 @@ public interface UPRepository extends JpaRepository<UserProject, Long>{
 
     void deleteByUserEntityAndProject(UserEntity user, Project project);
 
-    List<UserProject> findByUserEntityIdAndActiveIsTrue(Integer user_id);
+    List<UserProject> findByUserEntityIdAndActive(Integer user_id, boolean active);
 }

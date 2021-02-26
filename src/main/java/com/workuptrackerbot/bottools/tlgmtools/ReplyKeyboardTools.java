@@ -19,10 +19,7 @@ public class ReplyKeyboardTools {
     public static <T> ReplyKeyboard createReplyKeyboardMarkup(List<T> objects, Function<T, String> extractText) {
 
         if (objects.isEmpty()) {
-
-            ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
-            keyboardRemove.setSelective(false);
-            return keyboardRemove;
+            return ReplyKeyboardTools.removeKeyBord();
         }
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
@@ -69,5 +66,11 @@ public class ReplyKeyboardTools {
         List<T> list = new LinkedList<>();
         list.add(object);
         return createInlineKeyboard(list, extractText, extractId);
+    }
+
+    public static ReplyKeyboard removeKeyBord(){
+        ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
+        keyboardRemove.setSelective(false);
+        return keyboardRemove;
     }
 }
