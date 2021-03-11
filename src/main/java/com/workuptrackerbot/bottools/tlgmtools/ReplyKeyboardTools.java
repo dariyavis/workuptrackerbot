@@ -1,5 +1,6 @@
 package com.workuptrackerbot.bottools.tlgmtools;
 
+import com.workuptrackerbot.bottools.springbottools.callbackquery.InlineKeyboardButtonPath;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -14,7 +15,47 @@ import java.util.function.Function;
 
 public class ReplyKeyboardTools {
 
-    private static int COUNT_BUTTONS_IN_LINE = 3;
+    private static int COUNT_BUTTONS_IN_LINE = 5;
+    private static int COUNT_BUTTONS_IN_LINE_DEFUULT = 1;
+
+    public static class ButtonWithPath {
+        String text;
+        String path;
+        String data;
+
+        public ButtonWithPath() {
+        }
+
+        public ButtonWithPath(String text, String path, String data) {
+            this.text = text;
+            this.path = path;
+            this.data = data;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
+            this.data = data;
+        }
+    }
 
     public static <T> ReplyKeyboard createReplyKeyboardMarkup(List<T> objects, Function<T, String> extractText) {
 
@@ -41,7 +82,7 @@ public class ReplyKeyboardTools {
         return keyboardMarkup;
     }
 
-    public static <T> ReplyKeyboard createInlineKeyboard(List<T> objects, Function<T, String> extractText, Function<T, String> extractId) {
+    public static <T> ReplyKeyboard createInlineKeyboard(List<T> objects, Function<T, String> extractText, Function<T, String> getData) {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttonsLine = new ArrayList<>();
@@ -52,7 +93,7 @@ public class ReplyKeyboardTools {
             }
             InlineKeyboardButton ikbutton = new InlineKeyboardButton();
             ikbutton.setText(extractText.apply(objects.get(i)));
-            ikbutton.setCallbackData(extractId.apply(objects.get(i)));
+            ikbutton.setCallbackData(getData.apply(objects.get(i)));
             buttonsLine.add(ikbutton);
         }
 
@@ -61,16 +102,56 @@ public class ReplyKeyboardTools {
         return inlineKeyboardMarkup;
     }
 
-    public static <T> ReplyKeyboard createInlineKeyboard(T object, Function<T, String> extractText, Function<T, String> extractId) {
+    public static <T> ReplyKeyboard createInlineKeyboard(T object, Function<T, String> extractText, Function<T, String> getData) {
 
         List<T> list = new LinkedList<>();
         list.add(object);
-        return createInlineKeyboard(list, extractText, extractId);
+        return createInlineKeyboard(list, extractText, getData);
     }
 
-    public static ReplyKeyboard removeKeyBord(){
+    public static ReplyKeyboard removeKeyBord() {
         ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove(true);
         keyboardRemove.setSelective(false);
         return keyboardRemove;
+    }
+
+    public static InlineKeyboardButton createInlineKeyboardButtonWithPath(String textButton, String path, String data) {
+        InlineKeyboardButtonPath ikbutton = new InlineKeyboardButtonPath();
+        ikbutton.setText(textButton);
+        ikbutton.setPath(path);
+        ikbutton.setCallbackData(data);
+        return ikbutton;
+    }
+
+    public static InlineKeyboardMarkup createInlineKeyboardMarkupWithPath(List<ButtonWithPath> buttons, int countLines) {
+        List<List<InlineKeyboardButton>> listButtons = new ArrayList<>();
+        List<InlineKeyboardButton> buttonsLine = new ArrayList<>();
+        for (int i = 0; i < buttons.size(); i++) {
+            if (i % countLines == 0) {
+                if (i % COUNT_BUTTONS_IN_LINE == 0) {
+                    buttonsLine = new ArrayList<>();
+                    listButtons.add(buttonsLine);
+                }
+                ButtonWithPath buttonWithPath = buttons.get(i);
+                buttonsLine.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
+                        buttonWithPath.getText(),
+                        buttonWithPath.getPath(),
+                        buttonWithPath.getData()));
+            }
+        }
+//        listButtons.add(buttonsLineProjectAction);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.setKeyboard(listButtons);
+        return inlineKeyboardMarkup;
+    }
+
+    public static InlineKeyboardMarkup createInlineKeyboardMarkupWithPath(List<ButtonWithPath> buttons) {
+        return createInlineKeyboardMarkupWithPath(buttons, COUNT_BUTTONS_IN_LINE_DEFUULT);
+    }
+
+    public static InlineKeyboardMarkup createInlineKeyboardMarkupWithPath(ButtonWithPath button) {
+        List<ButtonWithPath> buttons = new LinkedList<>();
+        buttons.add(button);
+        return createInlineKeyboardMarkupWithPath(buttons, COUNT_BUTTONS_IN_LINE_DEFUULT);
     }
 }

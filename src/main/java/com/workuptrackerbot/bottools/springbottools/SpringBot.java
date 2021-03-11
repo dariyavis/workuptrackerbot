@@ -1,26 +1,32 @@
 package com.workuptrackerbot.bottools.springbottools;
 
+import com.workuptrackerbot.bottools.springbottools.callbackquery.CallbackQueryInterceptorable;
+import com.workuptrackerbot.bottools.springbottools.callbackquery.CallbackQueryProxy;
 import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.commands.CommandInterceptorable;
 import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public abstract class SpringBot extends TelegramLongPollingBot implements CommandInterceptorable {
+public abstract class SpringBot extends TelegramLongPollingBot implements CommandInterceptorable, CallbackQueryInterceptorable {
 
     private Map<String, Command> commands = new HashMap<>();
+    private Map<String, Function< Update, BotApiMethod>> callbackQuerys = new HashMap<>();
+
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -28,7 +34,16 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
     public void onUpdateReceived(Update update) {
 
         if (update.hasCallbackQuery()) {
-            onUpdateReceivedCallbackQuery(update);
+//            deleteMessage(update.getCallbackQuery().getMessage().getChatId().toString(), update.getCallbackQuery().getMessage().getMessageId());
+            CallbackQueryProxy queryProxy = new CallbackQueryProxy(update.getCallbackQuery());
+            update.setCallbackQuery(queryProxy);
+
+            try {
+                this.execute(callbackQuerys.get(queryProxy.getPath()).apply(update));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+//            onUpdateReceivedCallbackQuery(update);
             return;
         }
         Message message = update.getMessage();
@@ -77,9 +92,25 @@ public abstract class SpringBot extends TelegramLongPollingBot implements Comman
     }
 
     @Override
+    public void addCallBackQuery(String path, Function< Update, BotApiMethod> query){
+        callbackQuerys.put(path, query);
+    }
+
+    @Override
     public void onClosing() { }
 
     public abstract void saveCommandState(CommandState commandState);
 
     public abstract CommandState getCommandState(User user);
+
+    protected void deleteMessage(String chatId, Integer messageId) {
+        DeleteMessage deleteMessage = new DeleteMessage();
+        deleteMessage.setChatId(chatId);
+        deleteMessage.setMessageId(messageId);
+        try {
+            this.execute(deleteMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -12,4 +12,6 @@ public interface IntervalRepository  extends JpaRepository<Interval, Long> {
 
     void deleteByUserProject(UserProject up);
 
+    void deleteById(Long id);
+
 }

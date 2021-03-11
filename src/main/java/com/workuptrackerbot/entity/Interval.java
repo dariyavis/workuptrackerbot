@@ -16,7 +16,7 @@ public class Interval {
         private Long id;
 
         @OnDelete(action = OnDeleteAction.CASCADE)
-        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+        @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JoinColumn(name = "up_id")
         private UserProject userProject;
 

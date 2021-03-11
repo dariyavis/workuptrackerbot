@@ -78,9 +78,28 @@ public class ProjectService {
     }
 
 
+    public void unzipProjectByName(Integer user_id, String project_name) {
+        archiveProjectByName(user_id, project_name, true);
+    }
     public void zipProjectByName(Integer user_id, String project_name) {
+        archiveProjectByName(user_id, project_name, false);
+    }
+
+    private void archiveProjectByName(Integer user_id, String project_name, boolean active) {
         UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
-        up.setActive(true);
+        up.setActive(active);
         upRepository.save(up);
+    }
+
+
+    public UserProject getProjectInfo(Integer user_id, String project_name) {
+        return upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
+    }
+
+    public void renameProject(Integer user_id, String project_name, String new_project_name) {
+        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
+        Project project = up.getProject();
+        project.setName(new_project_name);
+        projectRepository.save(project);
     }
 }

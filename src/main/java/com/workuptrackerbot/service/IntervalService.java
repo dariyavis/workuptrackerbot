@@ -34,8 +34,8 @@ public class IntervalService {
 //        intervalRepository.save(interval);
     }
 
-    public Interval updateInterval(String id, Timestamp stopDate) {
-        Interval interval = intervalRepository.findById(Long.parseLong(id)).orElseThrow();
+    public Interval updateInterval(String interval_id, Timestamp stopDate) {
+        Interval interval = intervalRepository.findById(Long.parseLong(interval_id)).orElseThrow();
         interval.setStopDate(stopDate);
         intervalRepository.save(interval);
         return interval;
@@ -43,5 +43,9 @@ public class IntervalService {
 
     public void deleteIntervals(UserProject up) {
         intervalRepository.deleteByUserProject(up);
+    }
+
+    public void removeInteval(String inteval_id) {
+        intervalRepository.deleteById(Long.valueOf(inteval_id));
     }
 }

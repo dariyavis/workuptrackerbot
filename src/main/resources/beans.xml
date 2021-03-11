@@ -26,5 +26,6 @@
 
     <bean class="com.workuptrackerbot.bottools.springbottools.bpp.BotBeanPostProcessor"/>
     <bean class="com.workuptrackerbot.bottools.springbottools.bpp.BotCommandBeanPostProcessor"/>
+    <bean class="com.workuptrackerbot.bottools.springbottools.bpp.CallbackBeanPostProcessor"/>
 
 </beans>

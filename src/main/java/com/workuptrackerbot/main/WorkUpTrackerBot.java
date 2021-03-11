@@ -2,6 +2,8 @@ package com.workuptrackerbot.main;
 
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
+import com.workuptrackerbot.bottools.springbottools.annotations.CallbackQueryHandler;
+import com.workuptrackerbot.bottools.springbottools.annotations.HasCallbackQuery;
 import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Interval;
@@ -14,10 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 @Bot
+@HasCallbackQuery
 public class WorkUpTrackerBot extends SpringBot {
 
     @Value("${bot.token}")
@@ -48,7 +54,7 @@ public class WorkUpTrackerBot extends SpringBot {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @PostConstruct
-    public void postConstract(){
+    public void postConstract() {
         StringBuilder builder = new StringBuilder();
         builder.append("BOT: ");
         builder.append("username = {} ");
@@ -91,16 +97,47 @@ public class WorkUpTrackerBot extends SpringBot {
 
         executeMessage(message.getChatId(),
                 MessageFormat.format(
-                properties.getProperty("keyboard.tracking.start.message"),
+                        properties.getProperty("keyboard.tracking.start.message"),
                         interval.getUserProject().getProject().getName()),
-                ReplyKeyboardTools.createInlineKeyboard(interval,
-                        i -> properties.getProperty("keyboard.tracking.stop.button"),
-                        i -> i.getId().toString()));
+                ReplyKeyboardTools.createInlineKeyboardMarkupWithPath(
+                        new ReplyKeyboardTools.ButtonWithPath(
+                                MessageFormat.format(
+                                        properties.getProperty("keyboard.tracking.stop.button"),
+                                        interval.getUserProject().getProject().getName()),
+                                "stopTracking",
+                                interval.getId().toString()
+                        )));
     }
 
     //from unix
     @Override
     public void onUpdateReceivedCallbackQuery(Update update) {
+//        CallbackQuery callbackQuery = update.getCallbackQuery();
+//        Interval interval = intervalService.updateInterval(
+//                callbackQuery.getData(),
+//                new Timestamp(System.currentTimeMillis()));
+//
+//        Message message = update.getCallbackQuery().getMessage();
+//        deleteMessage(message.getChatId().toString(), message.getMessageId());
+//
+//
+////       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
+//       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//
+//
+//        executeMessage(callbackQuery.getMessage().getChatId(),
+//                MessageFormat.format(
+//                        properties.getProperty("keyboard.tracking.stop.message_interval"),
+//                        interval.getUserProject().getProject().getName(),
+//                        dateFormat.format(interval.getStartDate()),
+//                        dateFormat.format(interval.getStopDate()),
+//                        periodToString(interval.getStartDate(), interval.getStopDate())),
+//                null);
+
+    }
+
+    @CallbackQueryHandler(path = "stopTracking")
+    public BotApiMethod stopTracking(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Interval interval = intervalService.updateInterval(
                 callbackQuery.getData(),
@@ -111,18 +148,37 @@ public class WorkUpTrackerBot extends SpringBot {
 
 
 //       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
-       DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.enableMarkdown(true);
+        sendMessage.setText(MessageFormat.format(
+                properties.getProperty("keyboard.tracking.stop.message_interval"),
+                interval.getUserProject().getProject().getName(),
+                dateFormat.format(interval.getStartDate()),
+                dateFormat.format(interval.getStopDate()),
+                periodToString(interval.getStartDate(), interval.getStopDate())));
+        sendMessage.setReplyMarkup(
+                ReplyKeyboardTools.createInlineKeyboardMarkupWithPath(
+                        new ReplyKeyboardTools.ButtonWithPath(
+                                MessageFormat.format(
+                                        properties.getProperty("keyboard.tracking.removeinterval.button"),
+                                        interval.getUserProject().getProject().getName()),
+                                "removeInterval",
+                                interval.getId().toString()
+                        )));
+        return sendMessage;
+    }
 
-        executeMessage(callbackQuery.getMessage().getChatId(),
-                MessageFormat.format(
-                        properties.getProperty("keyboard.tracking.stop.message_interval"),
-                        interval.getUserProject().getProject().getName(),
-                        dateFormat.format(interval.getStartDate()),
-                        dateFormat.format(interval.getStopDate()),
-                        periodToString(interval.getStartDate(), interval.getStopDate())),
-                null);
-
+    @CallbackQueryHandler(path = "removeInterval")
+    public BotApiMethod removeInterval(Update update) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
+        sendMessage.enableMarkdown(true);
+        sendMessage.setText(properties.getProperty("keyboard.tracking.removedinterval.button"));
+        intervalService.removeInteval(update.getCallbackQuery().getData());
+        return sendMessage;
     }
 
     private String periodToString(Timestamp startDate, Timestamp stopDate) {
@@ -144,10 +200,10 @@ public class WorkUpTrackerBot extends SpringBot {
     }
 
     public static Timestamp convertDate(Integer javaTimeStamp) {
-        return new Timestamp((long)javaTimeStamp * 1000);
+        return new Timestamp((long) javaTimeStamp * 1000);
     }
 
-    private void executeMessage(Long chatId, String text, ReplyKeyboard replyKeyboard){
+    private void executeMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
         message.setText(text);
@@ -155,17 +211,6 @@ public class WorkUpTrackerBot extends SpringBot {
         message.enableMarkdown(true);
         try {
             this.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void deleteMessage(String chatId, Integer messageId) {
-        DeleteMessage deleteMessage = new DeleteMessage();
-        deleteMessage.setChatId(chatId);
-        deleteMessage.setMessageId(messageId);
-        try {
-            this.execute(deleteMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
