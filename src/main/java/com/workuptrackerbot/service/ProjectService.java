@@ -66,9 +66,9 @@ public class ProjectService {
     }
 
     @Transactional
-    public void removeProject(Integer user_id, String projectName) throws Exception{
+    public void removeProjectById(Integer user_id, String project_id) throws Exception{
         UserEntity user = userService.getUser(user_id);
-        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, projectName);
+        UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
         if(up == null) {
             return;
         }
@@ -78,22 +78,22 @@ public class ProjectService {
     }
 
 
-    public void unzipProjectByName(Integer user_id, String project_name) {
-        archiveProjectByName(user_id, project_name, true);
+    public void unzipProjectById(Integer user_id, String project_id) {
+        archiveProjectById(user_id, project_id, true);
     }
-    public void zipProjectByName(Integer user_id, String project_name) {
-        archiveProjectByName(user_id, project_name, false);
+    public void zipProjectById(Integer user_id, String project_id) {
+        archiveProjectById(user_id, project_id, false);
     }
 
-    private void archiveProjectByName(Integer user_id, String project_name, boolean active) {
-        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
+    private void archiveProjectById(Integer user_id, String project_id, boolean active) {
+        UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
         up.setActive(active);
         upRepository.save(up);
     }
 
 
-    public UserProject getProjectInfo(Integer user_id, String project_name) {
-        return upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
+    public UserProject getProjectInfoById(Integer user_id, String project_id) {
+        return upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
     }
 
     public void renameProject(Integer user_id, String project_name, String new_project_name) {

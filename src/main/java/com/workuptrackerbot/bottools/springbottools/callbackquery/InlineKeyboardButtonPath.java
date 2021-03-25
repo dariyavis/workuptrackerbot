@@ -1,6 +1,5 @@
 package com.workuptrackerbot.bottools.springbottools.callbackquery;
 
-import netscape.javascript.JSObject;
 import org.json.JSONObject;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -16,14 +15,6 @@ public class InlineKeyboardButtonPath extends InlineKeyboardButton {
     public void setPath(String path) {
         super.setCallbackData(puttingData(FIELD_PATH, path));
     }
-
-//    public String getCallbackData() {
-//        return getPuttingData(FIELD_DATA);
-//    }
-
-//    public String getPath() {
-//        return getPuttingData(FIELD_PATH);
-//    }
 
     private String puttingData(String field, String data){
         String callbackDataSuper = super.getCallbackData();

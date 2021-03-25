@@ -1,22 +1,22 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
-import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
-import com.workuptrackerbot.bottools.springbottools.commands.Command;
-import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
+import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
+import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.function.Consumer;
 
-@BotCommand(command = "/archive")
-public class ArchiveCommand extends Command {
+@HasBotAction
+public class ArchiveCommand {
 
     @Autowired
     private Properties properties;
@@ -24,8 +24,9 @@ public class ArchiveCommand extends Command {
     @Autowired
     private ProjectService projectService;
 
-    @Answer(index = 0)
-    public BotApiMethod showArchiveProjects(Message message) {
+    @BotAction(path = "archive", command = true)
+    public String showArchiveProjects(Consumer<BotApiMethod> execute, Update update) {
+        Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());
         StringBuilder sb = new StringBuilder();
@@ -47,6 +48,7 @@ public class ArchiveCommand extends Command {
 
         sendMessage.setText(sb.toString());
         sendMessage.enableMarkdown(true);
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 }

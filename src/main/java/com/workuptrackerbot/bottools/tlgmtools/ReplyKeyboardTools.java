@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class ReplyKeyboardTools {
 
-    private static int COUNT_BUTTONS_IN_LINE = 5;
+    private static int COUNT_BUTTONS_IN_LINE = 4;
     private static int COUNT_BUTTONS_IN_LINE_DEFUULT = 1;
 
     public static class ButtonWithPath {
@@ -123,23 +123,20 @@ public class ReplyKeyboardTools {
         return ikbutton;
     }
 
-    public static InlineKeyboardMarkup createInlineKeyboardMarkupWithPath(List<ButtonWithPath> buttons, int countLines) {
+    public static InlineKeyboardMarkup createInlineKeyboardMarkupWithPath(List<ButtonWithPath> buttons, int countInLines) {
         List<List<InlineKeyboardButton>> listButtons = new ArrayList<>();
         List<InlineKeyboardButton> buttonsLine = new ArrayList<>();
         for (int i = 0; i < buttons.size(); i++) {
-            if (i % countLines == 0) {
-                if (i % COUNT_BUTTONS_IN_LINE == 0) {
-                    buttonsLine = new ArrayList<>();
-                    listButtons.add(buttonsLine);
-                }
-                ButtonWithPath buttonWithPath = buttons.get(i);
-                buttonsLine.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
-                        buttonWithPath.getText(),
-                        buttonWithPath.getPath(),
-                        buttonWithPath.getData()));
+            if (i % countInLines == 0) {
+                buttonsLine = new ArrayList<>();
+                listButtons.add(buttonsLine);
             }
+            ButtonWithPath buttonWithPath = buttons.get(i);
+            buttonsLine.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
+                    buttonWithPath.getText(),
+                    buttonWithPath.getPath(),
+                    buttonWithPath.getData()));
         }
-//        listButtons.add(buttonsLineProjectAction);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(listButtons);
         return inlineKeyboardMarkup;

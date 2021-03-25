@@ -6,8 +6,8 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "command")
-public class CommandStateEntity {
+@Table(name = "action_state")
+public class ActionStateEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,22 +19,18 @@ public class CommandStateEntity {
         private UserEntity userEntity;
 
         @Column
-        private String command;
-
-        @Column
-        private Integer index;
+        private String action;
 
 
-        public CommandStateEntity(UserEntity userEntity, String command, Integer index) {
+        public ActionStateEntity(UserEntity userEntity, String action) {
                 this.userEntity = userEntity;
-                this.command = command;
-                this.index = index;
+                this.action = action;
         }
 
-        public CommandStateEntity() {
+        public ActionStateEntity() {
         }
 
-        public CommandStateEntity(UserEntity userEntity) {
+        public ActionStateEntity(UserEntity userEntity) {
                 this.userEntity = userEntity;
         }
 
@@ -54,19 +50,12 @@ public class CommandStateEntity {
                 this.userEntity = userEntity;
         }
 
-        public String getCommand() {
-                return command;
+        public String getAction() {
+                return action;
         }
 
-        public void setCommand(String command) {
-                this.command = command;
+        public void setAction(String command) {
+                this.action = command;
         }
 
-        public Integer getIndex() {
-                return index;
-        }
-
-        public void setIndex(Integer index) {
-                this.index = index;
-        }
 }

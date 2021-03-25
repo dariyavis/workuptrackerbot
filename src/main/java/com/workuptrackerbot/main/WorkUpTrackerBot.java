@@ -2,12 +2,10 @@ package com.workuptrackerbot.main;
 
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
-import com.workuptrackerbot.bottools.springbottools.annotations.CallbackQueryHandler;
-import com.workuptrackerbot.bottools.springbottools.annotations.HasCallbackQuery;
-import com.workuptrackerbot.bottools.springbottools.commands.CommandState;
+import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Interval;
-import com.workuptrackerbot.service.CommandStateService;
+import com.workuptrackerbot.service.ActionStateService;
 import com.workuptrackerbot.service.IntervalService;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -18,11 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.PostConstruct;
@@ -34,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 @Bot
-@HasCallbackQuery
 public class WorkUpTrackerBot extends SpringBot {
 
     @Value("${bot.token}")
@@ -49,7 +43,7 @@ public class WorkUpTrackerBot extends SpringBot {
     private IntervalService intervalService;
 
     @Autowired
-    private CommandStateService commandStateService;
+    private ActionStateService actionStateService;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -73,13 +67,13 @@ public class WorkUpTrackerBot extends SpringBot {
     }
 
     @Override
-    public void saveCommandState(CommandState commandState) {
-        commandStateService.saveCommandState(commandState);
+    public void saveActionState(ActionState actionState) {
+        actionStateService.saveActionState(actionState);
     }
 
     @Override
-    public CommandState getCommandState(User user) {
-        return commandStateService.getCommandState(user);
+    public ActionState getActionState(User user) {
+        return actionStateService.getActionState(user);
     }
 
 
@@ -136,7 +130,6 @@ public class WorkUpTrackerBot extends SpringBot {
 
     }
 
-    @CallbackQueryHandler(path = "stopTracking")
     public BotApiMethod stopTracking(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Interval interval = intervalService.updateInterval(
@@ -171,7 +164,6 @@ public class WorkUpTrackerBot extends SpringBot {
         return sendMessage;
     }
 
-    @CallbackQueryHandler(path = "removeInterval")
     public BotApiMethod removeInterval(Update update) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());

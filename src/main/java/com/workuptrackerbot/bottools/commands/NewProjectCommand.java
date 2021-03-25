@@ -1,24 +1,22 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
+import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
+import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
-import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
-import com.workuptrackerbot.bottools.springbottools.commands.Command;
-import com.workuptrackerbot.entity.Interval;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.Collections;
 import java.util.Properties;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
-@BotCommand(command="/new_project")
-public class NewProjectCommand extends Command {
+@HasBotAction
+public class NewProjectCommand {
 
 
     @Autowired
@@ -27,16 +25,18 @@ public class NewProjectCommand extends Command {
     @Autowired
     private ProjectService projectService;
 
-    @Answer(index = 0)
-    public BotApiMethod nameQuestion(Message message) {
+    @BotAction(path = "new_project", command = true)
+    public String nameQuestion(Consumer<BotApiMethod> execute, Update update){
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChat().getId().toString());
+        sendMessage.setChatId(update.getMessage().getChat().getId().toString());
         sendMessage.setText(properties.getProperty("command.createcommand.enterNameProject"));
-        return sendMessage;
+        execute.accept(sendMessage);
+        return "addProject";
     }
 
-    @Answer(index = 1)
-    public BotApiMethod addProject(Message message){
+    @BotAction(path = "addProject")
+    public String addProject(Consumer<BotApiMethod> execute, Update update){
+        Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());
 
@@ -53,11 +53,7 @@ public class NewProjectCommand extends Command {
         } catch (Exception e) {
             sendMessage.setText(properties.getProperty("command.createcommand.projectexist"));
         }
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
-
-
-
-
-
 }

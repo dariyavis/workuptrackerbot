@@ -7,8 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(value= ElementType.FIELD)
+@Target(value= ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface LastIndexCommand {
+public @interface BotAction {
+    String path();
+    boolean command() default false;
+    boolean callback() default false;
 }

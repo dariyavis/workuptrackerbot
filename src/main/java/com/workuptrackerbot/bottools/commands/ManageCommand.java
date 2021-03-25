@@ -1,15 +1,11 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
-import com.workuptrackerbot.bottools.springbottools.annotations.BotCommand;
-import com.workuptrackerbot.bottools.springbottools.annotations.CallbackQueryHandler;
-import com.workuptrackerbot.bottools.springbottools.annotations.HasCallbackQuery;
-import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.annotations.*;
+import com.workuptrackerbot.bottools.tlgmtools.MessageTools;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.entity.UserProject;
 import com.workuptrackerbot.service.ProjectService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -21,13 +17,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-@BotCommand(command = "/manage_project")
-@HasCallbackQuery(prefix = "/manage_project")
-public class ManageCommand extends Command {
+@HasBotAction
+public class ManageCommand {
 
     @Autowired
     private Properties properties;
@@ -35,55 +31,62 @@ public class ManageCommand extends Command {
     @Autowired
     private ProjectService projectService;
 
-    @Answer(index = 0)
-    public BotApiMethod nameQuestion(Message message) {
+    @BotAction(path = "manage_project", command = true, callback = true)
+    public String nameQuestion(Consumer<BotApiMethod> execute, Update update) {
+        Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());
-        sendMessage.setText(properties.getProperty("command.managecommand.enterNameProject"));
+        sendMessage.setText(properties.getProperty("command.managecommand.selectProject"));
+        List<Project> projects = projectService.getProjects(message.getFrom().getId());
+
         sendMessage.setReplyMarkup(
-                ReplyKeyboardTools.createReplyKeyboardMarkup(
-                        projectService.getProjects(message.getFrom().getId()),
-                        Project::getName
-                ));
-        return sendMessage;
+                ReplyKeyboardTools.createInlineKeyboardMarkupWithPath(
+                projects.stream().map(project -> new ReplyKeyboardTools.ButtonWithPath(
+                        project.getName(),
+                        "selectAction",
+                        project.getId().toString())).collect(Collectors.toList()), 3
+        ));
+        execute.accept(sendMessage);
+        return "selectAction";
     }
 
-    @Answer(index = 1)
-    public BotApiMethod selectAction(Message message){
-        UserProject up = projectService.getProjectInfo(message.getFrom().getId(), message.getText());
-        if(up == null){
-            return fillErrorMessage(message);
-        }
+    @BotAction(path = "selectAction", callback = true)
+    public String selectAction(Consumer<BotApiMethod> execute, Update update){
 
-        SendMessage sendMessage = createSendMessage(message.getChat().getId().toString());
+        execute.accept(
+                MessageTools.deleteMessage(update.getCallbackQuery().getMessage().getChatId().toString(),
+                update.getCallbackQuery().getMessage().getMessageId()));
+
+        String projectId = update.getCallbackQuery().getData();
+        UserProject up = projectService.getProjectInfoById(update.getCallbackQuery().getFrom().getId(), projectId);
+
+        SendMessage sendMessage = createSendMessage(update.getCallbackQuery().getMessage().getChat().getId().toString());
         sendMessage.setText(MessageFormat.format(
                 properties.getProperty("command.managecommand.selectaction"),
-                message.getText()));
-
-//        List<ReplyKeyboardTools.ButtonWithPath> buttons = new LinkedList<>()
+                up.getProject().getName()));
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<InlineKeyboardButton> buttonsLineProjectAction = new ArrayList<>();
         if(up.isActive()){
             buttonsLineProjectAction.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
                     properties.getProperty("command.managecommand.archive"),
-                    "/manage_projectarchive", message.getText()));
+                    "archive", projectId));
         } else {
             buttonsLineProjectAction.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
                     properties.getProperty("command.managecommand.unarchive"),
-                    "/manage_projectunarchive", message.getText()));
+                    "unarchive", projectId));
         }
         buttonsLineProjectAction.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
                 properties.getProperty("command.managecommand.leave"),
-                "/manage_projectleave", message.getText()));
+                "leave", projectId));
 //        buttonsLineProjectAction.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
 //                properties.getProperty("command.managecommand.rename"),
-//                "/manage_projectrename", message.getText()));
+//                "/manage_projectrename", projectId));
 
         List<InlineKeyboardButton> buttonsLineExitAction = new ArrayList<>();
         buttonsLineExitAction.add(ReplyKeyboardTools.createInlineKeyboardButtonWithPath(
                 properties.getProperty("command.managecommand.exit"),
-                "/manage_projectexit", message.getText()));
+                "exit", projectId));
 
         buttons.add(buttonsLineProjectAction);
         buttons.add(buttonsLineExitAction);
@@ -92,11 +95,12 @@ public class ManageCommand extends Command {
         inlineKeyboardMarkup.setKeyboard(buttons);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
 
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
-    @CallbackQueryHandler(path = "leave")
-    public BotApiMethod leaveProject(Update update) {
+    @BotAction(path = "leave", callback = true)
+    public String leaveProject(Consumer<BotApiMethod> execute, Update update) {
         Message message = update.getCallbackQuery().getMessage();
         SendMessage sendMessage = createSendMessage(message.getChat().getId().toString());
 
@@ -104,7 +108,7 @@ public class ManageCommand extends Command {
         String data = update.getCallbackQuery().getData();
 
         try {
-            projectService.removeProject(user.getId(), data);
+            projectService.removeProjectById(user.getId(), data);
             sendMessage.setText(
                     MessageFormat.format(
                             properties.getProperty("command.managecommand.leavedProject"),
@@ -115,13 +119,14 @@ public class ManageCommand extends Command {
                             Project::getName
                     ));
         } catch (Exception e) {
-            return fillErrorMessage(message);
+            execute.accept(fillErrorMessage(message));
         }
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
-    @CallbackQueryHandler(path = "archive")
-    public BotApiMethod archiveProject(Update update) {
+    @BotAction(path = "archive", callback = true)
+    public String archiveProject(Consumer<BotApiMethod> execute, Update update) {
         Message message = update.getCallbackQuery().getMessage();
         SendMessage sendMessage = createSendMessage(message.getChat().getId().toString());
 
@@ -129,7 +134,7 @@ public class ManageCommand extends Command {
         String data = update.getCallbackQuery().getData();
 
         try {
-            projectService.zipProjectByName(user.getId(), data);
+            projectService.zipProjectById(user.getId(), data);
             sendMessage.setText(
                     MessageFormat.format(
                             properties.getProperty("command.managecommand.archivedProject"),
@@ -140,13 +145,14 @@ public class ManageCommand extends Command {
                             Project::getName
                     ));
         } catch (Exception e) {
-            return fillErrorMessage(message);
+            execute.accept(fillErrorMessage(message));
         }
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
-    @CallbackQueryHandler(path = "unarchive")
-    public BotApiMethod unArchiveProject(Update update) {
+    @BotAction(path = "unarchive", callback = true)
+    public String unArchiveProject(Consumer<BotApiMethod> execute, Update update) {
         Message message = update.getCallbackQuery().getMessage();
         SendMessage sendMessage = createSendMessage(message.getChat().getId().toString());
 
@@ -154,7 +160,7 @@ public class ManageCommand extends Command {
         String data = update.getCallbackQuery().getData();
 
         try {
-            projectService.unzipProjectByName(user.getId(), data);
+            projectService.unzipProjectById(user.getId(), data);
             sendMessage.setText(
                     MessageFormat.format(
                             properties.getProperty("command.managecommand.unarchivedProject"),
@@ -165,13 +171,14 @@ public class ManageCommand extends Command {
                             Project::getName
                     ));
         } catch (Exception e) {
-            return fillErrorMessage(message);
+            execute.accept(fillErrorMessage(message));
         }
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
-    @CallbackQueryHandler(path = "exit")
-    public BotApiMethod exit(Update update) {
+    @BotAction(path = "exit", callback = true)
+    public String exit(Consumer<BotApiMethod> execute, Update update) {
         Message message = update.getCallbackQuery().getMessage();
         SendMessage sendMessage = createSendMessage(message.getChat().getId().toString());
 
@@ -187,7 +194,8 @@ public class ManageCommand extends Command {
         } catch (Exception e) {
             sendMessage.setText(properties.getProperty("command.managecommand.error"));
         }
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
     private SendMessage createSendMessage(String chatId) {
@@ -209,8 +217,8 @@ public class ManageCommand extends Command {
         return sendMessage;
     }
 
-    private String createData(String path, String data) {
-        return new JSONObject().put("data", data).put("path", path).toString();
-    }
+//    private String createData(String path, String data) {
+//        return new JSONObject().put("data", data).put("path", path).toString();
+//    }
 
 }

@@ -1,10 +1,9 @@
 package com.workuptrackerbot.bottools.commands;
 
-import com.workuptrackerbot.bottools.springbottools.annotations.Answer;
-import com.workuptrackerbot.bottools.springbottools.commands.Command;
+import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
+import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
-import com.workuptrackerbot.entity.UserEntity;
 import com.workuptrackerbot.service.ProjectService;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
@@ -13,13 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
+import java.util.function.Consumer;
 
-@com.workuptrackerbot.bottools.springbottools.annotations.BotCommand(command="/refresh")
-public class RefreshCommand extends Command {
+@HasBotAction
+public class RefreshCommand {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -33,28 +34,24 @@ public class RefreshCommand extends Command {
     private ProjectService projectService;
 
 
-    @Answer(index = 0)
-    public BotApiMethod handler(Message message) {
+    @BotAction(path = "refresh", command = true)
+    public String handler(Consumer<BotApiMethod> execute, Update update) {
+        Message message = update.getMessage();
         logger.info("User {} refreshed", message.getFrom().getUserName());
         User user = message.getFrom();
 
         SendMessage messageNew = new SendMessage();
         messageNew.setChatId(message.getChatId().toString());
 
-//        if(!userService.isUserExist(user)) {
-//            userService.createOrUpdateUser(user, message.getChatId());
-//            messageNew.setText(properties.getProperty("command.startcommand.welcome"));
-//        }
-//        else
-//        {
-            messageNew.setText(properties.getProperty("command.startcommand.refresh"));
-            userService.createOrUpdateUser(user, message.getChatId());
 
-            messageNew.setReplyMarkup(
-                    ReplyKeyboardTools.createReplyKeyboardMarkup(
-                            projectService.getActiveProjects(user.getId()),
-                            Project::getName));
-//        }
-        return messageNew;
+        messageNew.setText(properties.getProperty("command.startcommand.refresh"));
+        userService.createOrUpdateUser(user, message.getChatId());
+
+        messageNew.setReplyMarkup(
+                ReplyKeyboardTools.createReplyKeyboardMarkup(
+                        projectService.getActiveProjects(user.getId()),
+                        Project::getName));
+        execute.accept(messageNew);
+        return null;
     }
 }
