@@ -21,9 +21,9 @@ import java.util.function.Consumer;
 
 public abstract class SpringBot extends TelegramLongPollingBot implements BotStateInteroperable {
 
-    private Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> states = new HashMap<>();
-    private Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> commands = new HashMap<>();
-    private Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> callbackQueries = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> states = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> commands = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> callbackQueries = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

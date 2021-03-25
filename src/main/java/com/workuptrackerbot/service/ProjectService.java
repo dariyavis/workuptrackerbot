@@ -66,29 +66,31 @@ public class ProjectService {
     }
 
     @Transactional
-    public void removeProjectById(Integer user_id, String project_id) throws Exception{
+    public Project removeProjectById(Integer user_id, String project_id) {
         UserEntity user = userService.getUser(user_id);
         UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
         if(up == null) {
-            return;
+            return null;
         }
         intervalService.deleteIntervals(up);
         upRepository.delete(up);
         projectRepository.delete(up.getProject());
+        return up.getProject();
     }
 
 
-    public void unzipProjectById(Integer user_id, String project_id) {
-        archiveProjectById(user_id, project_id, true);
+    public Project unzipProjectById(Integer user_id, String project_id) {
+        return archiveProjectById(user_id, project_id, true);
     }
-    public void zipProjectById(Integer user_id, String project_id) {
-        archiveProjectById(user_id, project_id, false);
+    public Project zipProjectById(Integer user_id, String project_id) {
+        return archiveProjectById(user_id, project_id, false);
     }
 
-    private void archiveProjectById(Integer user_id, String project_id, boolean active) {
+    private Project archiveProjectById(Integer user_id, String project_id, boolean active) {
         UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
         up.setActive(active);
         upRepository.save(up);
+        return up.getProject();
     }
 
 
