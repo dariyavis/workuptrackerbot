@@ -50,7 +50,7 @@ public abstract class SpringBot extends TelegramLongPollingBot implements BotSta
         }
 
         ActionState actionState = getActionState(update.getMessage().getFrom());
-        if (actionState != null) {
+        if (actionState != null && actionState.getAction() != null) {
             updateCommandState(
                     update.getMessage().getFrom(),
                     states.get(actionState.getAction()).apply(this::botExecuter, update));

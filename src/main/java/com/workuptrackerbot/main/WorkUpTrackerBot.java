@@ -2,7 +2,10 @@ package com.workuptrackerbot.main;
 
 import com.workuptrackerbot.bottools.springbottools.SpringBot;
 import com.workuptrackerbot.bottools.springbottools.annotations.Bot;
+import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
+import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
+import com.workuptrackerbot.bottools.tlgmtools.MessageTools;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Interval;
 import com.workuptrackerbot.service.ActionStateService;
@@ -27,8 +30,10 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 @Bot
+@HasBotAction
 public class WorkUpTrackerBot extends SpringBot {
 
     @Value("${bot.token}")
@@ -130,14 +135,15 @@ public class WorkUpTrackerBot extends SpringBot {
 
     }
 
-    public BotApiMethod stopTracking(Update update) {
+    @BotAction(path = "stopTracking", callback = true)
+    public String stopTracking(Consumer<BotApiMethod> execute, Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Interval interval = intervalService.updateInterval(
                 callbackQuery.getData(),
                 new Timestamp(System.currentTimeMillis()));
 
         Message message = update.getCallbackQuery().getMessage();
-        deleteMessage(message.getChatId().toString(), message.getMessageId());
+        execute.accept(MessageTools.deleteMessage(message.getChatId().toString(), message.getMessageId()));
 
 
 //       DateFormat dateFormat = new SimpleDateFormat("HH:mm  dd.MM.yy");
@@ -161,16 +167,19 @@ public class WorkUpTrackerBot extends SpringBot {
                                 "removeInterval",
                                 interval.getId().toString()
                         )));
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
-    public BotApiMethod removeInterval(Update update) {
+    @BotAction(path = "removeInterval", callback = true)
+    public String removeInterval(Consumer<BotApiMethod> execute, Update update) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId().toString());
         sendMessage.enableMarkdown(true);
         sendMessage.setText(properties.getProperty("keyboard.tracking.removedinterval.button"));
         intervalService.removeInteval(update.getCallbackQuery().getData());
-        return sendMessage;
+        execute.accept(sendMessage);
+        return null;
     }
 
     private String periodToString(Timestamp startDate, Timestamp stopDate) {
