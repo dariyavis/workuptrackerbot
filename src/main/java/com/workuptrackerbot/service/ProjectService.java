@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -98,10 +99,14 @@ public class ProjectService {
         return upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
     }
 
-    public void renameProject(Integer user_id, String project_name, String new_project_name) {
-        UserProject up = upRepository.findByUserEntityIdAndProjectName(user_id, project_name);
-        Project project = up.getProject();
-        project.setName(new_project_name);
-        projectRepository.save(project);
+    public Project renameProject(String project_id, String new_project_name) {
+        Optional<Project> opt = projectRepository.findById(Long.valueOf(project_id));
+        if(opt.isPresent()) {
+            Project project = opt.get();
+            project.setName(new_project_name);
+            projectRepository.save(project);
+            return project;
+        }
+        return null;
     }
 }

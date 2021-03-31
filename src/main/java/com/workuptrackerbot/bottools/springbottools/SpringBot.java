@@ -3,6 +3,7 @@ package com.workuptrackerbot.bottools.springbottools;
 import com.workuptrackerbot.bottools.springbottools.callbackquery.BotStateInteroperable;
 import com.workuptrackerbot.bottools.springbottools.callbackquery.CallbackQueryProxy;
 import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
+import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,9 +22,9 @@ import java.util.function.Consumer;
 
 public abstract class SpringBot extends TelegramLongPollingBot implements BotStateInteroperable {
 
-    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> states = new HashMap<>();
-    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> commands = new HashMap<>();
-    private final Map<String, BiFunction<Consumer<BotApiMethod>, Update, String>> callbackQueries = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState>> states = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState>> commands = new HashMap<>();
+    private final Map<String, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState>> callbackQueries = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -38,14 +39,14 @@ public abstract class SpringBot extends TelegramLongPollingBot implements BotSta
             ;
             updateCommandState(
                     update.getCallbackQuery().getFrom(),
-                    callbackQueries.get(queryProxy.getPath()).apply(this::botExecuter, update));
+                    callbackQueries.get(queryProxy.getPath()).apply(this::botExecuter, new BotUpdate(update)));
             return;
         }
         Message message = update.getMessage();
         if (message.isCommand()) {
             updateCommandState(
                     update.getMessage().getFrom(),
-                    commands.get(message.getText()).apply(this::botExecuter, update));
+                    commands.get(message.getText()).apply(this::botExecuter, new BotUpdate(update)));
             return;
         }
 
@@ -53,15 +54,15 @@ public abstract class SpringBot extends TelegramLongPollingBot implements BotSta
         if (actionState != null && actionState.getAction() != null) {
             updateCommandState(
                     update.getMessage().getFrom(),
-                    states.get(actionState.getAction()).apply(this::botExecuter, update));
+                    states.get(actionState.getAction()).apply(this::botExecuter, new BotUpdate(update, actionState.getData())));
             return;
         }
 
         onUpdateReceivedMessage(update);
     }
 
-    private void updateCommandState(User user, String path) {
-        saveActionState(new ActionState(user, path));
+    private void updateCommandState(User user, ActionState actionState) {
+        saveActionState(actionState == null? new ActionState(user):actionState);
     }
 
     public void botExecuter(BotApiMethod botApiMethod) {
@@ -77,17 +78,17 @@ public abstract class SpringBot extends TelegramLongPollingBot implements BotSta
     protected abstract void onUpdateReceivedMessage(Update update);
 
     @Override
-    public void addBotState(String path, BiFunction<Consumer<BotApiMethod>, Update, String> handler) {
+    public void addBotState(String path, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState> handler) {
         states.put(path, handler);
     }
 
     @Override
-    public void addCommand(String path, BiFunction<Consumer<BotApiMethod>, Update, String> handler) {
+    public void addCommand(String path, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState> handler) {
         commands.put("/" + path, handler);
     }
 
     @Override
-    public void addCallback(String path, BiFunction<Consumer<BotApiMethod>, Update, String> handler) {
+    public void addCallback(String path, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState> handler) {
         callbackQueries.put(path, handler);
     }
 

@@ -21,8 +21,11 @@ public class ActionStateEntity {
         @Column
         private String action;
 
+        @Column
+        private String data;
 
-        public ActionStateEntity(UserEntity userEntity, String action) {
+
+        public ActionStateEntity(UserEntity userEntity, String action, String data) {
                 this.userEntity = userEntity;
                 this.action = action;
         }
@@ -58,4 +61,11 @@ public class ActionStateEntity {
                 this.action = command;
         }
 
+        public String getData() {
+                return data;
+        }
+
+        public void setData(String data) {
+                this.data = data;
+        }
 }

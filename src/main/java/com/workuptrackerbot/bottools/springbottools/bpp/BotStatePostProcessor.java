@@ -2,6 +2,7 @@ package com.workuptrackerbot.bottools.springbottools.bpp;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.*;
 import com.workuptrackerbot.bottools.springbottools.callbackquery.BotStateInteroperable;
+import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class BotStatePostProcessor implements BeanPostProcessor {
                     if (annotation.command()) {
                         ci.addCommand(annotation.path(), (botApiMethodConsumer, update) -> {
                                     try {
-                                        return (String) method.invoke(value, botApiMethodConsumer, update);
+                                        return (ActionState) method.invoke(value, botApiMethodConsumer, update);
                                     } catch (IllegalAccessException | InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
@@ -54,7 +55,7 @@ public class BotStatePostProcessor implements BeanPostProcessor {
                     if (annotation.callback()) {
                         ci.addCallback(annotation.path(), (botApiMethodConsumer, update) -> {
                                     try {
-                                        return (String) method.invoke(value, botApiMethodConsumer, update);
+                                        return (ActionState) method.invoke(value, botApiMethodConsumer, update);
                                     } catch (IllegalAccessException | InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
@@ -65,7 +66,7 @@ public class BotStatePostProcessor implements BeanPostProcessor {
                     if (!annotation.command() && !annotation.callback()) {
                         ci.addBotState(annotation.path(), (botApiMethodConsumer, update) -> {
                                     try {
-                                        return (String) method.invoke(value, botApiMethodConsumer, update);
+                                        return (ActionState) method.invoke(value, botApiMethodConsumer, update);
                                     } catch (IllegalAccessException | InvocationTargetException e) {
                                         e.printStackTrace();
                                     }

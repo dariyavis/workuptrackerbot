@@ -2,6 +2,8 @@ package com.workuptrackerbot.bottools.commands;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
 import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
+import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
+import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
 import com.workuptrackerbot.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,9 @@ public class StartCommand {
 
 
     @BotAction(path = "start", command = true)
-    public String handler(Consumer<BotApiMethod> execute, Update update) {
+    public ActionState handler(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
+
+        Update update = botUpdate.getUpdate();
         Message message = update.getMessage();
         logger.info("User {} start work with bot", message.getFrom().getUserName());
         User user = message.getFrom();

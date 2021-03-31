@@ -2,6 +2,8 @@ package com.workuptrackerbot.bottools.commands;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
 import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
+import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
+import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
@@ -26,16 +28,20 @@ public class NewProjectCommand {
     private ProjectService projectService;
 
     @BotAction(path = "new_project", command = true)
-    public String nameQuestion(Consumer<BotApiMethod> execute, Update update){
+    public ActionState nameQuestion(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
+
+        Update update = botUpdate.getUpdate();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getMessage().getChat().getId().toString());
         sendMessage.setText(properties.getProperty("command.createcommand.enterNameProject"));
         execute.accept(sendMessage);
-        return "addProject";
+        return new ActionState(update.getMessage().getFrom(),"addProject");
     }
 
     @BotAction(path = "addProject")
-    public String addProject(Consumer<BotApiMethod> execute, Update update){
+    public ActionState addProject(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
+
+        Update update = botUpdate.getUpdate();
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());

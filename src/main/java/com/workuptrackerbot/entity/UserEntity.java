@@ -78,7 +78,7 @@ public class UserEntity {
 
 /*
 *
-drop table command;
+drop table action_state;
 drop table intervals;
 drop table up;
 drop table projects;

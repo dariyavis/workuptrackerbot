@@ -2,6 +2,8 @@ package com.workuptrackerbot.bottools.commands;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
 import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
+import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
+import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,9 @@ public class ArchiveCommand {
     private ProjectService projectService;
 
     @BotAction(path = "archive", command = true)
-    public String showArchiveProjects(Consumer<BotApiMethod> execute, Update update) {
+    public ActionState showArchiveProjects(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
+
+        Update update = botUpdate.getUpdate();
         Message message = update.getMessage();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChat().getId().toString());

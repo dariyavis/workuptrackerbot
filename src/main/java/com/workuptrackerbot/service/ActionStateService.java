@@ -19,7 +19,7 @@ public class ActionStateService {
 
     public ActionState getActionState(User user) {
         ActionStateEntity entity = commandStateRepository.findByUserEntityId(user.getId());
-        return new ActionState(user, entity.getAction());
+        return new ActionState(user, entity.getAction(), entity.getData());
     }
 
     public void saveActionState(ActionState actionState) {
@@ -30,6 +30,7 @@ public class ActionStateService {
             entity.setUserEntity(userEntity);
         }
         entity.setAction(actionState.getAction());
+        entity.setData(actionState.getData());
         commandStateRepository.save(entity);
     }
 }
