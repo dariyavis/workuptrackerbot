@@ -22,7 +22,7 @@ public class IntervalService {
 
     public Interval createInterval(User user, String project_name, Timestamp startDate){
 
-        UserProject up = upRepository.findByUserEntityIdAndProjectName(user.getId(), project_name);
+        UserProject up = upRepository.findByUserEntity_TlgIdAndProjectName(user.getId(), project_name);
         if(up == null || intervalRepository.findByUserProjectAndStopDateIsNull(up) != null) {
             return null;
         }

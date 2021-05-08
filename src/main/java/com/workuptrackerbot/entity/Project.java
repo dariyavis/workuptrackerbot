@@ -16,9 +16,17 @@ public class Project {
 //    @JoinColumn(name="user_id", nullable=false)
 //    private User user;
 
+    @Column
+    private String description;
+
 
     public Project(String name) {
         this.name = name;
+    }
+
+    public Project(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     public Project() {
@@ -48,4 +56,13 @@ public class Project {
 //    public void setUser(User user) {
 //        this.user = user;
 //    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

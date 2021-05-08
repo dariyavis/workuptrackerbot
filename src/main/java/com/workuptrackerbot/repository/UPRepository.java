@@ -12,17 +12,21 @@ import java.util.List;
 @Repository
 public interface UPRepository extends JpaRepository<UserProject, Long>{
 
-    List<UserProject> findByUserEntityId(Integer user_id);
+    List<UserProject> findByUserEntity_TlgId(Integer user_id);
 
 
 //    @Query("select c from Child c join fetch c.parent where c.id = :id")
 //    UserProject findByIdFetchParent(@Param("id") Long id);
 
-    UserProject findByUserEntityIdAndProjectName(Integer user_id, String project_name);
+    UserProject findByUserEntity_TlgIdAndProjectName(Integer user_id, String project_name);
 
-    UserProject findByUserEntityIdAndProjectId(Integer user_id, Long project_id);
+    UserProject findByUserEntity_TlgIdAndProjectId(Integer user_id, Long project_id);
 
     void deleteByUserEntityAndProject(UserEntity user, Project project);
 
     List<UserProject> findByUserEntityIdAndActive(Integer user_id, boolean active);
+
+    List<UserProject> findByProjectId(Long project_id);
+
+    List<UserProject> findByUserEntity_TlgIdAndActive(Integer user_id, boolean active);
 }

@@ -1,16 +1,21 @@
 package com.workuptrackerbot.entity;
 
+import org.checkerframework.common.aliasing.qual.Unique;
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class UserEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
+    @Unique
+    @Column
+    private Integer tlgId;
 
     @Column
     private String username;
@@ -18,8 +23,6 @@ public class UserEntity {
 //    @Column(name = "firstname")
 //    private String firstName;
 
-    @Column
-    private Long chat_id;
 
     @Column(name = "registr_date")
     private Date registrDate;
@@ -36,19 +39,18 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(Integer id, String username, Long chat_id, Date registrDate) {
-        this.id = id;
+    public UserEntity(Integer tlgId, String username, Date registrDate) {
+        this.tlgId = tlgId;
         this.username = username;
-        this.chat_id = chat_id;
         this.registrDate = registrDate;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getTlgId() {
+        return tlgId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setTlgId(Integer tlg_id) {
+        this.tlgId = tlg_id;
     }
 
     public String getUsername() {
@@ -67,12 +69,12 @@ public class UserEntity {
         this.registrDate = registrDate;
     }
 
-    public Long getChat_id() {
-        return chat_id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setChat_id(Long chat_id) {
-        this.chat_id = chat_id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
 

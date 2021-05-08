@@ -17,7 +17,13 @@ public class MessageTools {
     public static SendMessage createSendMessage(String chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.enableMarkdown(true);
+        sendMessage.enableHtml(true);
+        return sendMessage;
+    }
+
+    public static SendMessage createSendMessage(String chatId, String text) {
+        SendMessage sendMessage = MessageTools.createSendMessage(chatId);
+        sendMessage.setText(text);
         return sendMessage;
     }
 }

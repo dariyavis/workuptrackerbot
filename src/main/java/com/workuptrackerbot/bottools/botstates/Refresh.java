@@ -1,9 +1,10 @@
-package com.workuptrackerbot.bottools.commands;
+package com.workuptrackerbot.bottools.botstates;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
 import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
 import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
+import com.workuptrackerbot.bottools.tlgmtools.MessageTools;
 import com.workuptrackerbot.bottools.tlgmtools.ReplyKeyboardTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
@@ -22,7 +23,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 @HasBotAction
-public class RefreshCommand {
+public class Refresh {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -35,21 +36,17 @@ public class RefreshCommand {
     @Autowired
     private ProjectService projectService;
 
-
     @BotAction(path = "refresh", command = true)
-    public ActionState handler(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
+    public ActionState refresh(Consumer<BotApiMethod> execute, BotUpdate botUpdate) {
 
         Update update = botUpdate.getUpdate();
         Message message = update.getMessage();
         logger.info("User {} refreshed", message.getFrom().getUserName());
         User user = message.getFrom();
 
-        SendMessage messageNew = new SendMessage();
-        messageNew.setChatId(message.getChatId().toString());
-
-
-        messageNew.setText(properties.getProperty("command.startcommand.refresh"));
-        userService.createOrUpdateUser(user, message.getChatId());
+        SendMessage messageNew = MessageTools.createSendMessage(message.getChat().getId().toString());
+        messageNew.setText(properties.getProperty("botstates.refresh"));
+        userService.createOrUpdateUser(user);
 
         messageNew.setReplyMarkup(
                 ReplyKeyboardTools.createReplyKeyboardMarkup(

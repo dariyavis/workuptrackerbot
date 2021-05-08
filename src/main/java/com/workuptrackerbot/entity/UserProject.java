@@ -1,5 +1,7 @@
 package com.workuptrackerbot.entity;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import javax.persistence.*;
 
 @Entity
@@ -24,6 +26,9 @@ public class UserProject {
         @Column
         private boolean active = true;
 
+        @Column
+        private boolean closed = false;
+
 //        @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //        @JoinTable(
 //                name = "intervals",
@@ -35,6 +40,12 @@ public class UserProject {
         public UserProject(UserEntity userEntity, Project project) {
                 this.userEntity = userEntity;
                 this.project = project;
+        }
+
+        public UserProject(UserEntity userEntity, Project project, boolean own) {
+                this.userEntity = userEntity;
+                this.project = project;
+                this.own = own;
         }
 
         public UserProject() {

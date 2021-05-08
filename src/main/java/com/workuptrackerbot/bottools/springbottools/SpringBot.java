@@ -32,37 +32,59 @@ public abstract class SpringBot extends TelegramLongPollingBot implements BotSta
     public void onUpdateReceived(Update update) {
 
         if (update.hasCallbackQuery()) {
-//            deleteMessage(update.getCallbackQuery().getMessage().getChatId().toString(), update.getCallbackQuery().getMessage().getMessageId());
             CallbackQueryProxy queryProxy = new CallbackQueryProxy(update.getCallbackQuery());
             update.setCallbackQuery(queryProxy);
 
             ;
             updateCommandState(
-                    update.getCallbackQuery().getFrom(),
-                    callbackQueries.get(queryProxy.getPath()).apply(this::botExecuter, new BotUpdate(update)));
+                    update,
+                    doState(callbackQueries, queryProxy.getPath(), update, null));
             return;
         }
         Message message = update.getMessage();
         if (message.isCommand()) {
             updateCommandState(
-                    update.getMessage().getFrom(),
-                    commands.get(message.getText()).apply(this::botExecuter, new BotUpdate(update)));
+                    update,
+                    doState(commands, message.getText(), update, null));
             return;
         }
 
         ActionState actionState = getActionState(update.getMessage().getFrom());
-        if (actionState != null && actionState.getAction() != null) {
-            updateCommandState(
-                    update.getMessage().getFrom(),
-                    states.get(actionState.getAction()).apply(this::botExecuter, new BotUpdate(update, actionState.getData())));
+        if(actionState.getAction() != null) {
+            doActionState(update, actionState);
             return;
         }
 
         onUpdateReceivedMessage(update);
     }
 
-    private void updateCommandState(User user, ActionState actionState) {
-        saveActionState(actionState == null? new ActionState(user):actionState);
+    private void doActionState(Update update, ActionState actionState){
+        if (actionState != null && actionState.getAction() != null) {
+            updateCommandState(
+                    update,
+                    doState(states, actionState.getAction(), update, actionState.getData()));
+            return;
+        }
+    }
+
+    private void updateCommandState(Update update, ActionState actionState) {
+        User user = update.hasCallbackQuery()? update.getCallbackQuery().getFrom() : update.getMessage().getFrom();
+        if(actionState == null) {
+            actionState = new ActionState(user);
+        }
+        if(actionState.isDoForce()) {
+            doActionState(update, actionState);
+        } else {
+            actionState.setUser(user);
+            saveActionState(actionState);
+        }
+    }
+
+    private ActionState doState(Map<String, BiFunction<Consumer<BotApiMethod>, BotUpdate, ActionState>> statesMap,
+                                String action, Update update, String actionData){
+        if(statesMap.containsKey(action))
+            return statesMap.get(action).apply(this::botExecuter, new BotUpdate(update, actionData));
+        return null;
     }
 
     public void botExecuter(BotApiMethod botApiMethod) {

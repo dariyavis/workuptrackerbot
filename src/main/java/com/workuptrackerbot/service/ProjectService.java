@@ -35,7 +35,7 @@ public class ProjectService {
 
         UserEntity user = userService.getUser(user_id);
         //если проект уже существует
-        if(upRepository.findByUserEntityIdAndProjectName(user_id, projectName) != null){
+        if(upRepository.findByUserEntity_TlgIdAndProjectName(user_id, projectName) != null){
             throw new Exception("project is already exist");
         }
 
@@ -46,30 +46,46 @@ public class ProjectService {
         upRepository.save(userProject);
     }
 
-//    public List<Project> getProjects(Integer user_id){
-//        return userService.getUser(user_id).getProjects();
-//    }
+    public UserProject addUserToProject(UserEntity user, String project_Id) {
+
+        Project project = getProject(project_Id);
+//        if(project==null) {
+//            throw new Exception("project not found");
+//        }
+
+        UserProject userProject = new UserProject(user, project, false);
+        upRepository.save(userProject);
+        return userProject;
+    }
+
+    public Project getProject(String project_Id){
+        Optional<Project> opt = projectRepository.findById(Long.valueOf(project_Id));
+        return opt.orElse(null);
+    }
 
     public List<Project> getActiveProjects(Integer user_id){
-        List<UserProject> ups = upRepository.findByUserEntityIdAndActive(user_id, true);
+        List<UserProject> ups = upRepository.findByUserEntity_TlgIdAndActive(user_id, true);
         return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
     }
 
     public List<Project> getArchiveProjects(Integer user_id){
-        List<UserProject> ups = upRepository.findByUserEntityIdAndActive(user_id, false);
+        List<UserProject> ups = upRepository.findByUserEntity_TlgIdAndActive(user_id, false);
         return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
     }
 
 
     public List<Project> getProjects(Integer user_id){
-        List<UserProject> ups = upRepository.findByUserEntityId(user_id);
+        List<UserProject> ups = getUPs(user_id);
         return ups.stream().map(UserProject::getProject).collect(Collectors.toList());
+    }
+    public List<UserProject> getUPs(Integer user_id){
+        return upRepository.findByUserEntity_TlgId(user_id);
     }
 
     @Transactional
     public Project removeProjectById(Integer user_id, String project_id) {
         UserEntity user = userService.getUser(user_id);
-        UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
+        UserProject up = upRepository.findByUserEntity_TlgIdAndProjectId(user_id, Long.valueOf(project_id));
         if(up == null) {
             return null;
         }
@@ -88,7 +104,7 @@ public class ProjectService {
     }
 
     private Project archiveProjectById(Integer user_id, String project_id, boolean active) {
-        UserProject up = upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
+        UserProject up = upRepository.findByUserEntity_TlgIdAndProjectId(user_id, Long.valueOf(project_id));
         up.setActive(active);
         upRepository.save(up);
         return up.getProject();
@@ -96,17 +112,23 @@ public class ProjectService {
 
 
     public UserProject getProjectInfoById(Integer user_id, String project_id) {
-        return upRepository.findByUserEntityIdAndProjectId(user_id, Long.valueOf(project_id));
+        return upRepository.findByUserEntity_TlgIdAndProjectId(user_id, Long.valueOf(project_id));
     }
 
-    public Project renameProject(String project_id, String new_project_name) {
+    public Project getProjectInfoById(String project_id) {
         Optional<Project> opt = projectRepository.findById(Long.valueOf(project_id));
-        if(opt.isPresent()) {
-            Project project = opt.get();
+        return opt.orElse(null);
+    }
+
+    public Project renameProject(Integer user_id, String project_id, String new_project_name)  throws Exception{
+        if(upRepository.findByUserEntity_TlgIdAndProjectName(user_id, new_project_name) != null){
+            throw new Exception("project is already exist");
+        }
+        Project project = getProjectInfoById(project_id);
+        if(project !=null) {
             project.setName(new_project_name);
             projectRepository.save(project);
-            return project;
         }
-        return null;
+        return project;
     }
 }

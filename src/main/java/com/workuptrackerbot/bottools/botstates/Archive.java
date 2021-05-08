@@ -1,14 +1,14 @@
-package com.workuptrackerbot.bottools.commands;
+package com.workuptrackerbot.bottools.botstates;
 
 import com.workuptrackerbot.bottools.springbottools.annotations.BotAction;
 import com.workuptrackerbot.bottools.springbottools.annotations.HasBotAction;
 import com.workuptrackerbot.bottools.springbottools.commands.ActionState;
 import com.workuptrackerbot.bottools.springbottools.commands.BotUpdate;
+import com.workuptrackerbot.bottools.tlgmtools.MessageTools;
 import com.workuptrackerbot.entity.Project;
 import com.workuptrackerbot.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 @HasBotAction
-public class ArchiveCommand {
+public class Archive {
 
     @Autowired
     private Properties properties;
@@ -31,8 +31,7 @@ public class ArchiveCommand {
 
         Update update = botUpdate.getUpdate();
         Message message = update.getMessage();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChat().getId().toString());
+
         StringBuilder sb = new StringBuilder();
         sb.append(MessageFormat.format(
                 properties.getProperty("command.archive.archiveProjectsTitle"),
@@ -50,9 +49,9 @@ public class ArchiveCommand {
             });
         }
 
-        sendMessage.setText(sb.toString());
-        sendMessage.enableMarkdown(true);
-        execute.accept(sendMessage);
+        execute.accept(
+                MessageTools.createSendMessage(
+                        message.getChat().getId().toString(), sb.toString()));
         return null;
     }
 }

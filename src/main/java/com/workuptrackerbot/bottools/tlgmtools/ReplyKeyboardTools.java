@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -150,5 +151,9 @@ public class ReplyKeyboardTools {
         List<ButtonWithPath> buttons = new LinkedList<>();
         buttons.add(button);
         return createInlineKeyboardMarkupWithPath(buttons, COUNT_BUTTONS_IN_LINE_DEFUULT);
+    }
+
+    public static List<InlineKeyboardButton> createListInlineKeyboardButtons(InlineKeyboardButton... buttons){
+       return new ArrayList<>(Arrays.asList(buttons));
     }
 }
